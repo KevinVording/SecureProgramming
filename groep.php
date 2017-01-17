@@ -1,17 +1,30 @@
-<?php
+<?php include "includes/functions.php"; ?>
+<?php include "includes/db.php"; ?>
+<?php include "config.php"; ?>
 
+<?php session_start(); ?>
+
+<?php
+    if (!isset($_SESSION['user_id']))
+    {
+        header("Location: index.php");
+    }
+?>
+
+<?php
+	$group_id = $_GET['groep'];
 	// Check if user is allowed to view this group
-	$user_perm = getUserPermission($core_user_item['user_id'], $group_id, $core_db_link);
+	$user_perm = getUserPermission($_SESSION['user_id'], $group_id);
 	if($user_perm === false) {
-		header("Location: " . BASE_URL . "dashboard");
+		header("Location: groepen.php");
 		exit();
 	}
-	$groupMembersArray = getAllSubscribersFromGroup($group_id, $core_db_link);
+	$groupMembersArray = getAllSubscribersFromGroup($group_id);
 	$groupMemberCount = count($groupMembersArray);
-	$usernamesArray = getUsernames($group_id, $core_db_link);
+	$usernamesArray = getUsernames($group_id);
 
-	$group_item = getSingleGroup($group_id, $core_db_link);
-	$userRights = getUserPermission($core_user_item['user_id'], $group_id, $core_db_link);
+	$group_item = getSingleGroup($group_id);
+	$userRights = getUserPermission($_SESSION['user_id'], $group_id);
 
 	$error_color = "green";
 	$errors = "";
@@ -55,9 +68,10 @@
 		}
 	}
 	$core_back_link = "kanaal/" . $group_item['channel_id'];
-	$core_title_prefix = $group_item['group_name'];
+	$core_title_prefix = $group_item['group_name'];?>
 
-	include(T_ROOT . "page-elements/header.php");?>
+	<?php include "includes/header.php"; ?>
+	<?php include "includes/navbar.php"; ?>
 	<style>
 		#contentContainer {
 			height: 100%;
@@ -78,65 +92,7 @@
 		<?php endif; ?>
 
 		<div class="row" style="height: 100%; margin-bottom: 0;">
-			<div class="col s12 m12 l7" style="overflow-y: scroll; height: 100%;">
-				<div class="row">
-					<div class="col s12 pageHeadColumn">
-						<div class="row">
-							<div class="col s6">
-								<h5>Blokken</h5>
-							</div>
-							<div class="col s6" style="text-align: right;">
-								<?php
-									if($userRights != false && $userRights <= 2) {
-										echo '<a style="margin: 0.82rem 0 0.656rem 0;" href="' . BASE_URL . 'blok/toevoegen/' . $group_id . '" class="hide-on-large-only waves-effect waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalButton2">';
-										echo '<i class="material-icons left">add</i>Blok aanmaken';
-										echo '</a>';
-										echo '<a style="margin: 0.82rem 0 0.656rem 0;" href="' . BASE_URL . 'blok/toevoegen/' . $group_id . '" class="waves-effect waves-light hide-on-med-and-down btn ' . $core_colors['accent'] . 'modal-trigger modalButton2">';
-										echo '<i class="material-icons left">add</i>Blok aanmaken';
-										echo '</a>';
-									}
-								?>
-							</div>
-						</div>
-					</div>
-					<div class="col s12">
-						<?php
-							if($block_array != false) {
-								echo '<ul class="collection" id="blockList">';
-								foreach($block_array as $key=>$block){
-									$user_item = getUser($block['last_edit_user'], "", $core_db_link); ?>
-									<li class="collection-item avatar blockListItem">
-										<a class="blockListItemLink" href="<?php echo BASE_URL . "blok/" . $block['block_id'] ?>">
-											<i class="material-icons circle">folder</i>
-											<span class="title black-text" style="font-weight:bold;"><?php echo $block["block_name"] ?></span>
-											<p class="grey-text text-darken-2">Laatst bewerkt door: <?php echo $user_item['user_firstname'] . " " . $user_item['user_lastname']; ?></p>
-											<?php
-												$uploads = getAllUploads($block['block_id'], $core_db_link);
-												if(count($uploads) > 0) {
-													echo '<a href="#!" class="secondary-content ' . $core_colors['accent'] . '-text">';
-													echo '<i style="vertical-align: bottom;display: inline-block;" class="material-icons">attach_file</i>';
-													echo '<div class="blockListItemGrade">' . count($uploads) . '</div>';
-													echo '</a>';
-												}
-											?>
-										</a>
-									</li>
-								<?php
-								}
-								echo '</ul>';
-							}
-							else {
-								echo '<div class="col s12 center-align">';
-								echo '<div class="card white black-text text-darken-2 errorCard" style="padding: 16px 0;">';
-								echo 'Er zijn (nog) geen blokken aangemaakt in deze groep.';
-								echo '</div>';
-								echo '</div>';
-							}
-						?>
-					</div>
-				</div>
-			</div>
-			<div class="col s12 m12 l5" id="chatMainContainer">
+			<div class="col s12 m12" id="chatMainContainer">
 				<div class="row" style="margin-bottom: 0;">
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
@@ -386,4 +342,4 @@
 			$('#chatHistoryContainer').animate({scrollTop: $('#chatHistoryContainer').prop("scrollHeight")}, 300);
 		}
 	</script>
-<?php include(T_ROOT . "page-elements/footer.php");?>
+<?php include "includes/footer.php";?>

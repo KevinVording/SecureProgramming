@@ -33,24 +33,36 @@ function getAdmin($user_id)
     }
 }
 
-function getUserPermission($user_id)
+function getUserPermission($user_id, $group_id)
 {
     global $connection;
 
-    // AND group_id = '$group_id'
-    $query = "SELECT * FROM  sw_user WHERE user_id = '$user_id'";
+    $rowPresent = false;
+
+    $query = "SELECT user_group_rights
+              FROM  sw_user_group
+              WHERE user_id = '$user_id'
+              AND group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
 
     if(mysqli_num_rows($result) <= 0)
     {
-        return false;
+        $rowPresent = false;
+    }
+    else
+    {
+      $rowPresent = true;
     }
 
-    while($row = mysqli_fetch_assoc($result))
+    if($rowPresent == true)
     {
-        return $row['user_role'];
+      $row = mysqli_fetch_assoc($result);
+      return $row;
     }
-    return $false;
+    else
+    {
+      return false;
+    }
 }
 
 function getSingleChannel($channel_id)
@@ -113,6 +125,65 @@ function getAllSubscribersFromChannel($channel_id)
 
     return $text_array;
 }
+
+function getAllSubscribersFromGroup($group_id)
+{
+    global $connection;
+
+		$sub_array = array();
+		$query =   "SELECT *
+					FROM sw_user_group, sw_user
+					WHERE sw_user_group.user_id = sw_user.user_id
+					AND sw_user_group.group_id = '" . $group_id . "'";
+		$result = mysqli_query($connection, $query);
+		while($row = mysqli_fetch_assoc($result)) {
+			$sub_array[] = $row;
+		}
+		if(empty($sub_array)) {
+			$sub_array = false;
+		}
+	return $sub_array;
+}
+
+function getUserNames($user_id)
+{
+  global $connection;
+
+	$query = "SELECT *
+          	FROM sw_user, sw_user_group
+          	WHERE sw_user.user_id = sw_user_group.user_id
+          	AND sw_user_group.group_id = '" . $user_id . "'";
+
+	$result = mysqli_query($connection, $query);
+	if(mysqli_num_rows($result) == 0)
+	{
+		return false;
+	}
+
+	while($row = mysqli_fetch_assoc($result))
+	{
+		$text_array[] = $row;
+	}
+
+	return $text_array;
+}
+
+function getSingleGroup($group_id)
+{
+    global $connection;
+
+		$query = "SELECT *
+				FROM  sw_group
+				WHERE group_id = '" . $group_id . "'";
+		$result = mysqli_query($connection, $query);
+
+		if(mysqli_num_rows($result) <= 0) {
+			return false;
+		}
+		$row = mysqli_fetch_assoc($result);
+
+		return $row;
+	}
 
 function subscribedGroup($user_id, $group_id)
 {

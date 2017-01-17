@@ -26,7 +26,7 @@
 
 
 	$groupsArray = getChannelGroups();
-	$user_perm = getUserPermission($_SESSION['user_id']);
+	//$user_perm = getUserPermission($_SESSION['user_id']);
 
 	$error_color = "green";
 	$errors = "";
@@ -184,7 +184,6 @@
 							<div class="col s6">
 								<h5>Chats</h5>
 							</div>
-							<?php if($user_perm == 1) { ?>
 							<div class="col s6" style="text-align: right;">
 								<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect waves-light btn-floating hide-on-large-only <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
 									<i class="material-icons left">edit</i>Groep aanmaken
@@ -193,7 +192,6 @@
 									<i class="material-icons left"></i>Groep aanmaken
 								</a>
 							</div>
-							<?php } ?>
 						</div>
 					</div>
 
@@ -206,10 +204,8 @@
 							<div class="card white darken-1 hoverable">
 								<div class="card-content black-text" style="height: 200px;">
 									<span class="card-title truncate"><?php echo $groups['group_name']; ?></span>
-									<?php if($user_perm == 1) { ?>
 										<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groep te verwijderen" style="float: right;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
-									<?php } ?>
-
+									
 									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="Gesloten groep" style="float: right;"><?php echo $groups['group_password'] === "" ? '' : 'lock_outline'; ?></i>
 
 									<p><?php echo $groups['group_description']; ?></p>
@@ -224,7 +220,7 @@
 									}
 									else
 									{
-										echo '<a class="waves-effect waves-light btn" href="groep/' . $groups['group_id'] . '">Openen</a>';
+										echo '<a class="waves-effect waves-light btn" href="groep.php?groep=' . $groups['group_id'] . '">Openen</a>';
 										echo '<a style="color: #F44336; font-weight: bold;" class="card-title unsub modalUnsubButton clickableDiv ' . $core_colors['accent'] . '-text" data-target="modalUnsub" data-unsubid="' . $groups['group_id'] . '">Afmelden</a>';
 									}
 									?>
