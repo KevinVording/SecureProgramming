@@ -7,6 +7,7 @@
 <?php session_start(); ?>
 
 <?php
+	// check is user is already logged in, else redirct to login page
     if (!isset($_SESSION['user_id']))
     {
         header("Location: index.php");
@@ -14,17 +15,6 @@
 ?>
 
 <?php
-
-	/*$channel_id = 32357;
-	$group_id = 54608;*/
-
-	//$channel_item = getSingleChannel($channel_id);
-	//$adminArray = getAdmin($_SESSION['user_id']);
-
-
-
-
-
 	$groupsArray = getChannelGroups();
 	$user_perm = getUserPermission($_SESSION['user_id']);
 
@@ -63,7 +53,7 @@
 			}
 			else
 			{
-        echo $verifyHashpassword;
+        		echo $verifyHashpassword;
 				$errors .= "Wachtwoord is onjuist!";
 				$error_color = "red";
 			}
@@ -103,7 +93,7 @@
 		// Run the unsub query/function in here
 		$grid = escapeString($_POST['groupIDUnsub']); // save sent groupid
 		unsubscribeGroup($_SESSION['user_id'], $grid);
-		header("Location: channel.php");
+		header("Location: groepen.php");
 		exit();
 	}
 
@@ -120,9 +110,17 @@
 
 			$hashpassword = generateHash($groupPassword);
 
-			createGroup($groupName, $groupDescription, $hashpassword);
+			if (groupnameExists($groupName))
+			{
+				$errors .= "Groepsnaam bestaat al!";
+				$error_color = "red";
+			} 
+			else
+			{
+				createGroup($groupName, $groupDescription, $hashpassword);
 
-			header("Location: channel.php");
+				header("Location: groepen.php");
+			}			
 		}
 		elseif(!empty($_POST['groupName']) && !empty($_POST['groupDescription']) && empty($_POST['groupPassword']))
 		{
@@ -134,7 +132,12 @@
 
 			createGroup($groupName, $groupDescription);
 
-			header("Location: channel.php");
+			header("Location: groepen.php");
+		}
+		else
+		{
+			$errors .= "Groepsnaam en omschrijving zijn verplicht!";
+			$error_color = "red";
 		}
 	}
 
@@ -146,14 +149,13 @@
 		$grid = escapeString($_POST['groupIDDelete']); // save sent groupid
 		deleteGroup($grid);
 
-		header("Location: channel.php");
+		header("Location: groepen.php");
 
 		//header("Location: " . BASE_URL . "kanaal/" . $channel_id);
 	}
 ?>
 	<?php include "includes/header.php"; ?>
 	<?php include "includes/navbar.php"; ?>
-
 
 	<div class="container">
 		<?php if($errors != ""): ?>
@@ -167,14 +169,6 @@
 			<div class="col s3">&nbsp;</div>
 		</div>
 		<?php endif; ?>
-
-		<?php
-			$groupData = getPrivateGroup(54626);
-			$password = $groupData['group_password'];
-
-			echo $password;
-
-		?>
 
 		<div class="row">
 			<div class="col s12">
@@ -196,8 +190,6 @@
 							<?php } ?>
 						</div>
 					</div>
-
-
 
 					<?php foreach((array)$groupsArray as $key => $groups): ?>
 						<?php $subscribed = subscribedGroup($_SESSION['user_id'], $groups['group_id']); ?>
@@ -256,7 +248,7 @@
 	    <h4>Maak een groep</h4>
 		<p>Voer de benodidge gegevens in</p>
 		<div class="form-data">
-			<form method="post" id="form2" action="channel.php">
+			<form method="post" id="form2" action="groepen.php">
 				<input type="text" id="groupName" name="groupName" placeholder="Vul groep naam in"/>
 				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Vul groep omschrijving in"/>
 				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul groep wachtwoord in"/>
