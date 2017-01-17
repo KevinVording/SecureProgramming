@@ -5,9 +5,9 @@
 <?php session_start(); ?>
 
 <?php
-    if (isset($_SESSION['user_id'])) 
+    if (isset($_SESSION['user_id']))
     {
-        header("Location: groepen.php");          
+        header("Location: groepen.php");
     }
 ?>
 
@@ -16,7 +16,7 @@
     $errors = '';
     $error_color = 'green';
 
-    if (isset($_POST['login'])) 
+    if (isset($_POST['login']))
     {
         $username = escapeString($_POST['username']);
         $password = escapeString($_POST['password']);
@@ -26,9 +26,9 @@
 
         confirmQuery($result);
 
-        if(escapeString(mysqli_num_rows($result)) <= 0)
+        if(escapeString(mysqli_num_rows($result)) == 0)
         {
-            $errors .= 'Gebruikersnaam en wachtwoord komen niet overeen';
+            $errors .= 'Username and password do not match' . '<br>';
             $error_color = 'red';
         }
         else
@@ -44,51 +44,46 @@
                 $db_email       = escapeString($row['user_email']);
             }
 
-            $verifyHashpassword = verifyPassword($password, $db_password);
-
-            if($verifyHashpassword == true)
-            {   
+            if(verifyPassword($password, $db_password) == true)
+            {
                 setSession($db_id, $db_username, $db_firstname, $db_lastname, $db_email);
                 header("Location: groepen.php");
+
+                $errors .= 'Correct' . '<br>';
             }
             else
             {
-                $errors .= 'Gebruikersnaam en wachtwoord komen niet overeen';
+                $errors .= 'Username and password do not match' . '<br>';
                 $error_color = 'red';
-            } 
+            }
         }
     }
 ?>
-    
+
 <?php include "includes/header.php"; ?>
 
     <div class="container">
         <div class="row">
-            <div class="col s4 offset-s4">
+            <div class="col-md-4 col-md-offset-4" style="padding: 15px; maring: 0 auto;">
                 <!-- Blog Login Well -->
-                <div class="card-panel white" style="margin-top: 50%;">
-                    <h4 class="center-align">Login</h4>
+                <div class="well">
+                    <h4 class="text-center">Login</h4>
                     <form action="" method="post">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="password" placeholder="Password">
+                        </div>
+
+                        <div class="form-group">
+                            <input name="login" type="submit" class="btn btn-primary btn-block" value="Log in">
+                        </div>
                         <?php if($errors != ""): ?>
-                            <div style='color: <?php echo $error_color; ?>' class="center-align">
-                                <?php echo $errors; ?>
-                            </div><br>
-                        <?php endif; ?>
-
-                        <div class="form-group">
-                            <label for="username" class="sr-only">Gebruikersnaam</label>
-                            <input type="text" class="form-control" name="username" value="<?php echo isset($_POST['username']) ? $_POST['username'] : '' ?>">
+                        <div style='color: <?php echo $error_color; ?>' class="text-center">
+                            <?php echo $errors; ?>
                         </div>
-                        <div class="form-group">
-                            <label for="username" class="sr-only">Wachtwoord</label>
-                            <input type="password" class="form-control" name="password">
-                        </div>
-
-                        <div class="form-group">
-                            <input name="login" type="submit" class="btn btn-primary btn-block" value="Log in" style="margin: 0 auto;">
-                        </div>
-
-                        <p class="center-align"><a href="register.php">Registreer</a></p> 
+                    <?php endif; ?>
                     </form>
                     <!-- /.input-group -->
                 </div>
@@ -96,6 +91,4 @@
         </div>
     </div>
 
-</body>
-
-</html>
+<?php include "includes/footer.php"; ?>

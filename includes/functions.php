@@ -23,8 +23,6 @@ function getAdmin($user_id)
     $query = "SELECT * FROM  sw_user_group WHERE user_id = '$user_id' AND user_group_rights = 1";
     $result = mysqli_query($connection, $query);
 
-    confirmQuery($result);
-
     if(mysqli_num_rows($result) <= 0)
     {
         return false;
@@ -42,8 +40,6 @@ function getUserPermission($user_id)
     // AND group_id = '$group_id'
     $query = "SELECT * FROM  sw_user WHERE user_id = '$user_id'";
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
 
     if(mysqli_num_rows($result) <= 0)
     {
@@ -63,9 +59,6 @@ function getSingleChannel($channel_id)
 
     $query = "SELECT * FROM  sw_channel WHERE sw_channel.channel_id = '$channel_id'";
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
-
     $row = mysqli_num_rows($result);
 
     return $row;
@@ -79,8 +72,6 @@ function getChannelGroups()
 
     $query = "SELECT * FROM sw_group";
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
 
     if(mysqli_num_rows($result) <= 0)
     {
@@ -110,8 +101,6 @@ function getAllSubscribersFromChannel($channel_id)
             GROUP BY sw_user_group.user_id";
     $result = mysqli_query($connection, $query);
 
-    confirmQuery($result);
-
     while($rows = mysqli_fetch_assoc($result))
     {
         $text_array[] = $rows;
@@ -136,8 +125,6 @@ function subscribedGroup($user_id, $group_id)
             WHERE sw_user_group.user_id = '$user_id'
             AND sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
 
     if(mysqli_num_rows($result) <= 0)
     {
@@ -165,8 +152,6 @@ function createGroup($group_name, $group_description, $group_password)
     }
     $result = mysqli_query($connection, $query);
 
-    confirmQuery($result);
-
     return $result;
 }
 
@@ -181,9 +166,6 @@ function unsubscribeGroup($user_id, $group_id)
             AND t2.group_id = '$group_id'";
 
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
-
     return $result;
 }
 
@@ -196,8 +178,6 @@ function getPublicGroup($group_id)
             WHERE sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
     $row = mysqli_num_rows($result);
-
-    confirmQuery($result);
 
     return $row;
 }
@@ -251,8 +231,6 @@ function checkSubscription($group_id, $user_id)
     $result = mysqli_query($connection, $query);
     $row = mysqli_num_rows($result);
 
-    confirmQuery($result);
-
     return $row;
 }
 
@@ -266,8 +244,6 @@ function addPrivateSubscriptionGroup($group_id, $user_id, $user_group_rights)
     $query = "INSERT INTO sw_user_group(group_id, user_id, user_group_rights)
               VALUES ('$group_id', '$user_id', '$user_group_rights')";
     $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
 
     return $result;
 }
@@ -286,8 +262,6 @@ function getPrivateGroup($group_id)
     $result = mysqli_query($connection, $query);
     $row = mysqli_fetch_assoc($result);
 
-    confirmQuery($result);
-
     return $row;
 }
 
@@ -303,24 +277,6 @@ function deleteGroup($group_id)
               WHERE sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
 
-    confirmQuery($result);
-
-    return $result;
-}
-
-function createUser($user_name, $user_firstname, $user_lastname, $user_email, $user_password)
-{
-    //$date = date('Y-m-d h:i:s', time());
-
-    global $connection;
-
-    $query = "INSERT INTO sw_user(user_name, user_firstname, user_lastname, user_email, user_password)";
-    $query .= "VALUES('$user_name', '$user_firstname', '$user_lastname', '$user_email', '$user_password')";
-
-    $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
-
     return $result;
 }
 
@@ -328,7 +284,7 @@ function usernameExists($username)
 {
     global $connection;
 
-    $query = "SELECT user_name FROM sw_user WHERE user_name = '$username'";
+    $query = "SELECT username FROM users WHERE username = '$username'";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -352,31 +308,7 @@ function emailExists($email)
 {
     global $connection;
 
-    $query = "SELECT user_email FROM sw_user WHERE user_email = '$email'";
-    $result = mysqli_query($connection, $query);
-
-    confirmQuery($result);
-
-    if(escapeString(mysqli_num_rows($result)) <= 0)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-        /*while($row = mysqli_fetch_assoc($result))
-        {
-            return $row['username'];
-        }*/
-    }
-
-}
-
-function groupnameExists($groupname)
-{
-    global $connection;
-
-    $query = "SELECT group_name FROM sw_group WHERE group_name = '$groupname'";
+    $query = "SELECT user_email FROM users WHERE user_email = '$email'";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -416,11 +348,11 @@ function verifyPassword($password, $hashedPassword)
     // Now, what about checking if a password is the right password?
     if (crypt($password, $hashedPassword) == $hashedPassword)
     {
-        return true;
+        return "true";
     }
     else
     {
-        return false;
+        return "false";
     }
 }
 

@@ -1,11 +1,22 @@
-<nav>
-  <div class="nav-wrapper teal">
-    <ul id="nav-mobile" class="right hide-on-med-and-down" style="margin-right: 15%;">      
-      <?php
-      if(basename($_SERVER['PHP_SELF']) == 'groep.php')
-      { ?>
-          <li><a href="groepen.php" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Ga naar groepen"><i class="material-icons">home</i></a></li>
-      <?php } ?>
-    </ul>
-  </div>
+<nav class="navbar navbar-default">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href='' style="pointer-events:none;">Ingelogd als: <?php echo $_SESSION['username']; ?></a></li>
+        <li><a href="logout.php">Logout</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
 </nav>
