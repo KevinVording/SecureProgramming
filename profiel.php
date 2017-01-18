@@ -176,7 +176,7 @@ $errors = "";
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
 							<div class="col s6">
-								<h5>Hallo, <?php echo $_SESSION['username']; ?></h5>
+								
 							</div>
 						</div>
 					</div>
@@ -186,38 +186,63 @@ $errors = "";
 		</div>
 	</div>
 
-	
-	<div class="row">
-		<form class="col s12" style="float:left;">
-			<div class="row">
-				<div class="input-field col s12">
-					<input placeholder="<?PHP echo $_SESSION['username'];?>" id="username" type="text" class="validate" value="<?PHP echo $_SESSION['username'];?>">
-					<label for="username">Username</label>
-				</div>
-			</div>
-			<div class="row">
-				<div class="input-field col s6">
-					<input placeholder="<?PHP echo $_SESSION['firstname'];?>" id="first_name" type="text" class="validate" value="<?PHP echo $_SESSION['firstname'];?>">
-					<label for="first_name">Firstname</label>
-				</div>
-				<div class="input-field col s6">
-					<input  placeholder="<?PHP echo $_SESSION['firstname'];?>" id="last_name" type="text" class="validate" value="<?PHP echo $_SESSION['lastname'];?>">
-					<label for="last_name">Lastname</label>
-				</div>
-			</div>
-			<div class="row">
-				<div class="input-field col s12">
-					<input placeholder="email" id="email" type="email" class="validate" value="<?PHP echo $_SESSION['email'];?>">
-					<label for="email">Email</label>
-				</div>
-			</div>
-			<div class="form-group">
-				<input name="login" type="submit" class="btn btn-primary btn-block" value="Opslaan" style="float:left;">
-				<input name="login" type="submit" class="btn btn-primary btn-block" value="Clear" style="float:right;">
-			</div>
-		</form>
-	</div>
 
+	<div class="col s12 m6 l6">
+		<div class="card white darken-1 hoverable">
+			<div class="card-content black-text">
+				<span class="card-title"><h5>Hallo, <?php echo $_SESSION['firstname'], "&nbsp;".$_SESSION['lastname']; ?></h5></span>
+				<span class="right">Online sinds: <i></i></span>
+				<div class="row">
+					<form class="col s12" style="float:left;">
+						<div class="row">
+							<div class="input-field col s12">
+								<input placeholder="<?PHP echo $_SESSION['username'];?>" id="username" type="text" class="validate" value="<?PHP echo $_SESSION['username'];?>">
+								<label for="username">Username</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s6">
+								<input placeholder="<?PHP echo $_SESSION['firstname'];?>" id="first_name" type="text" class="validate" value="<?PHP echo $_SESSION['firstname'];?>">
+								<label for="first_name">Firstname</label>
+							</div>
+							<div class="input-field col s6">
+								<input  placeholder="<?PHP echo $_SESSION['firstname'];?>" id="last_name" type="text" class="validate" value="<?PHP echo $_SESSION['lastname'];?>">
+								<label for="last_name">Lastname</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s12">
+								<input placeholder="email" id="email" type="email" class="validate" value="<?PHP echo $_SESSION['email'];?>">
+								<label for="email">Email</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<input name="login" type="submit" class="btn btn-primary btn-block" value="Opslaan" style="float:left;">
+							<input name="login" type="submit" class="btn btn-primary btn-block" value="Clear" style="float:right;">
+						</div>
+					</form>
+				</div>
+
+				<ul class="collapsible" data-collapsible="accordion">
+					<li>
+
+						<div class="collapsible-header"><i class="material-icons">view_list</i>Kanalen ()</div>
+						
+					</li>
+				</ul>
+				<a class="dropdown-theme waves-effect waves-light  btn <?php echo $core_colors['accent'];?>" href="#" data-activates='dropdown1'><i class="material-icons left">color_lens</i>Thema</a>
+
+
+
+				<form method="post" id="formTheme">
+					<input type="hidden" id="themeInput" value="0" name="theme_id"/>
+				</form>
+				<ul id='dropdown1' class='dropdown-content'>
+
+				</ul>
+			</div>
+		</div>
+	</div>
 
 	<script>
 		$(document).ready(function() {

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col s6">
-        <p class="grey-text text-lighten-4"><b>Ingelogd als: &nbsp; &nbsp;</b><a href="profiel.php" class="white-text text-darken-2 underline tooltipped" data-position="top" data-delay="50" data-tooltip="Ga naar profiel"><?php echo $_SESSION['username']; ?></a></p>
+        <p class="grey-text text-lighten-4"><b>Ingelogd als: &nbsp; &nbsp;</b><a href="profiel.php" class="white-text text-darken-2 underline tooltipped" data-position="top" data-delay="50" data-tooltip="Ga naar profiel"><?php echo $_SESSION['firstname'], "&nbsp;".$_SESSION['lastname']; ?></a></p>
       </div>
       <div class="col s6">
         <ul class="right">
@@ -14,7 +14,7 @@
   </div>
   <div class="footer-copyright">
     <div class="container">
-    © 2016 Copyright Kevin, Michael, Selami
+      © 2016 Copyright Kevin, Michael, Selami
     </div>
   </div>
 </footer>
