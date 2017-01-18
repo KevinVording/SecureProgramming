@@ -64,7 +64,7 @@
 					editGroupPassword($grid);
 				}
 			}
-			else 
+			else
 			{
 				echo "U heeft geen rechten tot deze actie!";
 			}
@@ -117,43 +117,48 @@
 							</div>
 							<div class="col s6 right-align">
 								<?php
-									if($user_perm == 1) 
+									if($user_perm == 1)
 									{
 										echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
-										
+
 										echo '<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
 									}
-									/*if($user_perm == true)
-									{
-										echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '">
-												<i class="material-icons left">edit</i>Aanpassen</a>
-										<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '">
-												<i class="material-icons left">edit</i>Aanpassen</a>';
-									}*/
 								?>
 							</div>
 						</div>
 
-						
 							<?php
 								if($groupMemberCount > 0) {
 									echo '<ul class="collection with-header">';
-									foreach ($groupMembersArray as $key=>$member)
-									{
-										echo '<li class="collection-item">'. $member["user_name"] .'</li>';
-									}
-									echo '</ul>';
+
+                  if($user_perm == 1)
+                  {
+                    foreach ($groupMembersArray as $key=>$member)
+  									{
+  										echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="deleteuser.php?groep=' . $member['group_id'] . '&delete=' . $member["user_id"] . '" class="right red-text italic">Verwijderen</a></li>';
+  									}
+  									echo '</ul>';
+                  }
+                  else
+                  {
+                    foreach ($groupMembersArray as $key=>$member)
+  									{
+  										echo '<li class="collection-item">'. $member["user_name"] .'</li>';
+  									}
+  									echo '</ul>';
+                  }
+
 								}
-								else 
+								else
 								{
 									echo '<div class="italic">Deze groep heeft nog geen deelnemers!</div>';
 								}
 							?>
-						
+
 					</div>
 				</div>
 
-				<div id="chatHistoryContainer">					
+				<div id="chatHistoryContainer">
 				</div>
 
 				<div id="chatSendContainer" style="position: absolute; bottom: 0px; left: 0px; width: 100%; box-sizing: border-box; margin-bottom: 16px;">
@@ -306,13 +311,13 @@
 				type: 'GET',
 				data: { "group_id": "<?php echo $group_id; ?>" },
 				success: function (data) {
-					if(data == false) 
+					if(data == false)
 					{
 						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze chat groep, zeg eens hallo!</div></div></div>';
 
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}
-					else 
+					else
 					{
 						loadData(data);
 					}

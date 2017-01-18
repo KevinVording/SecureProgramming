@@ -69,7 +69,14 @@
 		$grid = escapeString($_POST['groupIDPublic']); // save sent groupid
 		//$groupData = getPublicGroup($grid);
 		//$gid = $groupData['group_id'];
-		$groupRights = 1;
+    $usersAlreadyInGroup = getAllSubscribersFromGroup($grid);
+    if($usersAlreadyInGroup == false)
+    {
+  		$groupRights = 1;
+    }
+    else {
+      $groupRights = 2;
+    }
 		$subbed = subscribedGroup($_SESSION['user_id'], $grid);
 
 		if($subbed == false)
@@ -113,23 +120,29 @@
 			{
 				$errors .= "Groepsnaam bestaat al!";
 				$error_color = "red";
-			} 
+			}
 			else
 			{
 				createGroup($groupName, $groupDescription, $hashpassword);
-
+        $last_id = $connection->insert_id;
+      	$groupRights = 1;
+        signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
+        
 				header("Location: groepen.php");
-			}			
+			}
 		}
 		elseif(!empty($_POST['groupName']) && !empty($_POST['groupDescription']) && empty($_POST['groupPassword']))
 		{
 			$groupName = escapeString($_POST['groupName']);
 			$groupDescription = escapeString($_POST['groupDescription']);
-			$groupPassword = escapeString($_POST['groupPassword']);
+			$groupPassword = "";
 
 			$hashpassword = generateHash($groupPassword);
 
-			createGroup($groupName, $groupDescription);
+			createGroup($groupName, $groupDescription, $groupPassword);
+      $last_id = $connection->insert_id;
+      $groupRights = 1;
+      signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
 
 			header("Location: groepen.php");
 		}
@@ -196,7 +209,7 @@
 								<div class="card-content black-text" style="height: 200px;">
 									<span class="card-title truncate"><?php echo $groups['group_name']; ?></span>
 										<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groep te verwijderen" style="float: right;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
-									
+
 									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="Gesloten groep" style="float: right;"><?php echo $groups['group_password'] === "" ? '' : 'lock_outline'; ?></i>
 
 									<p><?php echo $groups['group_description']; ?></p>
@@ -241,15 +254,16 @@
 <div id="modal2" class="modal">
 	  <div class="modal-content">
 	    <h4>Maak een groep</h4>
-		<p>Voer de benodidge gegevens in</p>
-		<div class="form-data">
-			<form method="post" id="form2" action="groepen.php">
-				<input type="text" id="groupName" name="groupName" placeholder="Vul groep naam in"/>
-				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Vul groep omschrijving in"/>
-				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul groep wachtwoord in"/>
-			</form>
-		</div>
-		<br><div class="modal-footer">
+		    <p>Voer de benodidge gegevens in</p>
+	      <div class="form-data">
+    			<form method="post" id="form2" action="groepen.php">
+    				<input type="text" id="groupName" name="groupName" placeholder="Vul groep naam in"/>
+    				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Vul groep omschrijving in"/>
+    				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul groep wachtwoord in"/>
+    			</form>
+    		</div>
+      <br>
+    <div class="modal-footer">
 			<button class="btn waves-effect waves-light <?php echo $core_colors['accent']; ?>" data-dismiss="modal2" form="form2" type="submit" name="submitNewGroup">Aanmaken
 
 			<i class="material-icons right">send</i>

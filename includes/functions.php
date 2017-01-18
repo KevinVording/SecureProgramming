@@ -579,6 +579,20 @@ function verifyPassword($password, $hashedPassword)
     }
 }
 
+function deleteUserFromGroup($user_id, $group_id)
+{
+  global $connection;
+
+  $query = "DELETE FROM sw_user_group
+            WHERE sw_user_group.user_id = '$user_id'
+            AND sw_user_group.group_id = '$group_id'";
+  $result = mysqli_query($connection, $query);
+
+  confirmQuery($result);
+
+  return $result;
+}
+
 function setSession($user_id, $username, $firstname, $lastname, $email)
 {
     $_SESSION['user_id']    = $user_id;
