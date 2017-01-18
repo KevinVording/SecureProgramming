@@ -11,7 +11,7 @@
 	// Timestamps, are changed according to server OS if needed.
 	$core_timestamp_formats = array(
 		"chat_timestamp" => "%H:%M",
-		"chat_datestamp" => "%e %B",
+		"chat_datestamp" => "d M",
 	);
 	$core_dropbox_auth = array(
 		"dropboxKey" 	=> "ql6acp5dda9ph0b",

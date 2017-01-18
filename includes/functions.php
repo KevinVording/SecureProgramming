@@ -51,21 +51,14 @@ function getUserPermission($user_id, $group_id)
 
     if(mysqli_num_rows($result) <= 0)
     {
-        $rowPresent = false;
+        return false;
     }
     else
     {
-      $rowPresent = true;
-    }
-
-    if($rowPresent == true)
-    {
-      $row = mysqli_fetch_assoc($result);
-      return $row;
-    }
-    else
-    {
-      return false;
+        while($row = mysqli_fetch_assoc($result))
+        {
+            return $row['user_group_rights'];
+        }
     }
 }
 
@@ -107,7 +100,7 @@ function getChannelGroups()
     return $text_array;
 }
 
-function getAllSubscribersFromChannel($channel_id)
+/*function getAllSubscribersFromChannel($channel_id)
 {
     global $connection;
 
@@ -135,7 +128,7 @@ function getAllSubscribersFromChannel($channel_id)
     }
 
     return $text_array;
-}
+}*/
 
 function getAllSubscribersFromGroup($group_id)
 {
@@ -387,6 +380,85 @@ function createUser($user_name, $user_firstname, $user_lastname, $user_email, $u
 
     $query = "INSERT INTO sw_user(user_name, user_firstname, user_lastname, user_email, user_password)";
     $query .= "VALUES('$user_name', '$user_firstname', '$user_lastname', '$user_email', '$user_password')";
+
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    return $result;
+}
+
+function getAllChats($group_id)
+{
+    global $connection;
+
+    $query = "SELECT *
+              FROM  sw_chat, sw_group, sw_user
+              WHERE sw_chat.group_id = sw_group.group_id
+              AND sw_chat.user_id = sw_user.user_id
+              AND sw_chat.group_id = '$group_id'
+              ORDER BY timemessage";
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    if(escapeString(mysqli_num_rows($result) == 0))
+    {
+        return false;
+    }
+    else
+    {
+        while($row = mysqli_fetch_assoc($result))
+        {
+            $text_array[] = $row;
+        }
+    }  
+    return $text_array;
+}
+
+function addMessage($chat_message, $user_id, $group_id, $db_link)
+{
+    global $connection;
+
+    $query = "INSERT INTO sw_chat(chat_message, user_id, group_id)";
+    $query .= "VALUES ('$chat_message', '$user_id', '$group_id')";
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    return $result;
+}
+
+function editGroup($group_id, $group_name, $group_description, $group_password)
+{
+    global $connection;
+
+    if (empty($group_password))
+    {
+        $query = "UPDATE sw_group
+                  SET group_name = '$group_name', group_description = '$group_description'
+                  WHERE group_id = '$group_id'";
+    }
+    else
+    {
+        $query = "UPDATE sw_group
+                  SET group_name = '$group_name', group_description = '$group_description', group_password = '$group_password'
+                  WHERE group_id = '$group_id'";
+    }
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    return $result;
+}
+
+function editGroupPassword($group_id)
+{
+    global $connection;
+
+    $query = "UPDATE sw_group
+              SET group_password = ''
+              WHERE group_id = '$group_id'";
 
     $result = mysqli_query($connection, $query);
 

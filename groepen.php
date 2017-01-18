@@ -53,7 +53,6 @@
 			}
 			else
 			{
-        		echo $verifyHashpassword;
 				$errors .= "Wachtwoord is onjuist!";
 				$error_color = "red";
 			}

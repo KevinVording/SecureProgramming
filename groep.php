@@ -13,18 +13,19 @@
 
 <?php
 	$group_id = $_GET['groep'];
+
 	// Check if user is allowed to view this group
 	$user_perm = getUserPermission($_SESSION['user_id'], $group_id);
 	if($user_perm === false) {
 		header("Location: groepen.php");
 		exit();
 	}
+
 	$groupMembersArray = getAllSubscribersFromGroup($group_id);
 	$groupMemberCount = count($groupMembersArray);
 	$usernamesArray = getUsernames($group_id);
-
 	$group_item = getSingleGroup($group_id);
-	$userRights = getUserPermission($_SESSION['user_id'], $group_id);
+	$chat_items = getAllChats($group_id);
 
 	$error_color = "green";
 	$errors = "";
@@ -36,17 +37,19 @@
 	{
 		if(isset($_POST['groupName']) && isset($_POST['groupDescription']))
 		{
-			if($userRights != false && $userRights <= 2) {
-				$grid = escapeString($_POST['groupIDEdit'], $core_db_link);
+			if($user_perm != false && $user_perm == 1) {
+				$grid = escapeString($_POST['groupIDEdit']);
 
-				$groupName = escapeString($_POST['groupName'], $core_db_link);
-				$groupDescription = escapeString($_POST['groupDescription'], $core_db_link);
-				$groupPassword = escapeString($_POST['groupPassword'], $core_db_link);
-				$groupPasswordCheck = escapeString($_POST['groupPasswordCheck'], $core_db_link);
+				$groupName = escapeString($_POST['groupName']);
+				$groupDescription = escapeString($_POST['groupDescription']);
+				$groupPassword = escapeString($_POST['groupPassword']);
+				$groupPasswordCheck = escapeString($_POST['groupPasswordCheck']);
+
+				$hashpassword = generateHash($groupPassword);
 
 				if($groupPassword == $groupPasswordCheck)
 				{
-					editGroup($grid, $groupName, $groupDescription, $groupPassword, $core_db_link);
+					editGroup($grid, $groupName, $groupDescription, $hashpassword);
 
 					$errors .= "U heeft de groep succesvol gewijzigd!";
 				}
@@ -58,26 +61,21 @@
 
 				if(isset($_POST['checkPassword']) && isset($_POST['checkPassword']) == "emptyPassword")
 				{
-					editGroupPassword($grid, $core_db_link);
+					editGroupPassword($grid);
 				}
 			}
-			else {
+			else 
+			{
 				echo "U heeft geen rechten tot deze actie!";
-				die();
 			}
 		}
 	}
-	$core_back_link = "kanaal/" . $group_item['channel_id'];
-	$core_title_prefix = $group_item['group_name'];?>
+	?>
 
 	<?php include "includes/header.php"; ?>
 	<?php include "includes/navbar.php"; ?>
-	<style>
-		#contentContainer {
-			height: 100%;
-		}
-	</style>
-	<div class="container" style="height: 100%;">
+
+	<div class="container" style="height: 90%; width: 70%">
 
 		<?php if($errors != ""): ?>
 		<div class="row errorRow">
@@ -97,7 +95,7 @@
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
 							<div class="col s6">
-								<h5>Chat</h5>
+								<h5 class="teal-text"><b>Chatgroep:</b> <?php echo $group_item['group_name']; ?></h5>
 							</div>
 							<div class="col s6" style="text-align: right;">
 								<a class="rightwaves-effect waves-light btn-floating hide-on-large-only modal-trigger <?php echo $core_colors['accent']; ?>" href="#modal1" style="margin: 0.82rem 0 0.656rem 0;">
@@ -110,71 +108,72 @@
 						</div>
 					</div>
 				</div>
-				<div id="modal1" class="modal bottom-sheet">
+
+				<div id="modal1" class="modal">
 					<div class="modal-content">
 						<div class="row">
 							<div class="col s6 left-align">
-								<h4>Deelnemers</h4>
+								<h4><?php echo '<div class="italic">Aantal deelnemers: ' . $groupMemberCount . '</div>'; ?></h4>
 							</div>
 							<div class="col s6 right-align">
 								<?php
-									if($userRights != false && $userRights <= 2) {
+									if($user_perm == 1) 
+									{
 										echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
+										
 										echo '<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
-										echo '<a style="margin-left: 16px;" href="' . BASE_URL . 'groep-rechten/' . $group_id . '" class="hide-on-med-and-down waves-effect waves-light btn ' . $core_colors['accent'] . '"><i class="material-icons right">edit</i>Rechten aanpassen</a>';
-										echo '<a style="margin-left: 16px;" href="' . BASE_URL . 'groep-rechten/' . $group_id . '" class="hide-on-large-only waves-effect waves-light btn ' . $core_colors['accent'] . '"><i class="material-icons right">edit</i>Rechten aanpassen</a>';
 									}
-									if($userRights == true)
+									/*if($user_perm == true)
 									{
 										echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '">
 												<i class="material-icons left">edit</i>Aanpassen</a>
 										<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '">
 												<i class="material-icons left">edit</i>Aanpassen</a>';
-									}
+									}*/
 								?>
-
-								<button style="margin-left: 16px;" id="closeModalButton" class="hide-on-med-and-down waves-effect waves-light btn <?php echo $core_colors['accent']; ?>"><i class="material-icons right">close</i>Sluiten</button>
-								<button style="margin-left: 16px;" id="closeModalButton" class="hide-on-large-only waves-effect waves-light btn-floating <?php echo $core_colors['accent']; ?>"><i class="material-icons right">close</i>Sluiten</button>
 							</div>
-
 						</div>
-						<div class="col 12">
+
+						
 							<?php
 								if($groupMemberCount > 0) {
-									echo '<div class="italic bold">Aantal deelnemers: ' . $groupMemberCount . '</div>';
-									echo '<ul class="collection">';
-									foreach ($groupMembersArray as $key=>$member){
-										echo '<li class="collection-item">' . $member["user_firstname"] . " " . $member["user_lastname"] . '</li>';
+									echo '<ul class="collection with-header">';
+									foreach ($groupMembersArray as $key=>$member)
+									{
+										echo '<li class="collection-item">'. $member["user_name"] .'</li>';
 									}
 									echo '</ul>';
 								}
-								else {
+								else 
+								{
 									echo '<div class="italic">Deze groep heeft nog geen deelnemers!</div>';
 								}
 							?>
-						</div>
+						
 					</div>
 				</div>
-				<div id="chatHistoryContainer">
-				</div>
-				<div id="chatSendContainer" style="position: absolute; bottom: 0px; left: 0px; width: 100%; box-sizing: border-box; margin-bottom: 16px;">
 
-					<form name="addMessage" method="post" action="chat.php">
+				<div id="chatHistoryContainer">					
+				</div>
+
+				<div id="chatSendContainer" style="position: absolute; bottom: 0px; left: 0px; width: 100%; box-sizing: border-box; margin-bottom: 16px;">
+					<form name="addMessage" method="post" action="groep.php">
 						<div class="row" style="margin: 0;">
 							<div class="valign-wrapper">
 								<ul class="collapsible subscribers" data-collapsible="accordion">
 							  	</ul>
-								<div class="input-field col s10">
+								<div class="input-field col s12">
 								  <textarea class="materialize-textarea" id="chatTextarea" rows="4" name="message" style="min-height: 3em; height: 3em; border: 1px solid #e0e0e0; padding: 8px; background-color: #ffffff; margin: 0; max-height: 10em; border-radius: 5px;" placeholder="Typ hier..."></textarea>
 								</div>
 								<div class="col s2">
-									<div id="chatSendButton" class="clickableDiv" name="submit" style="padding: 8px; border-radius: 50%; width: 60px; height: 60px; margin-top: 5px; float: right; border: 1px solid #e0e0e0; text-align: center;background-color: #ffffff;">
+									<div id="chatSendButton" class="clickableDiv" name="submit" style="padding: 8px; border-radius: 50%; width: 60px; height: 60px; margin-top: 15px; float: right; border: 1px solid #e0e0e0; text-align: center;background-color: #ffffff; margin-right: 45px;">
 										<i class="valign material-icons <?php echo $core_colors['accent']; ?>-text" style="font-size: 30px; line-height: 46px;">message</i>
 									</div>
 								</div>
 							</div>
 						</div>
 					</form>
+
 				</div>
 			</div>
 		</div>
@@ -186,7 +185,7 @@
 		    <h4>Pas hier de groep aan</h4>
 			<p>Voer de benodidge gegevens in</p>
 			<div class="form-data">
-				<form method="post" id="form1" action="<?php echo BASE_URL . "groep/" . $group_id?>">
+				<form method="post" id="form1">
 					<input type="text" id="groupName" name="groupName" value="<?php echo $group_item['group_name']; ?>" placeholder="Vul groep naam in"/>
 					<input type="text" id="groupDescription" name="groupDescription" value="<?php echo $group_item['group_description']; ?>" length="190" placeholder="Vul groep omschrijving in"/>
 					<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul channel wachtwoord in"/>
@@ -206,7 +205,7 @@
 	</div>
 
 	<script>
-		var this_user = "<?php echo $core_user_item['user_id']; ?>";
+		var this_user = "<?php echo $_SESSION['user_id']; ?>";
 		$(document).ready(function(){
 
 			$(".modalEditButton").on("click", function(e) {
@@ -236,7 +235,7 @@
 			 	if(this.value.indexOf("@") > -1)
 			 	{
 			 		$(".subscribers").empty();
-			 		loadSubscribers();
+			 		//loadSubscribers();
 			 	}
 			 	else
 			 	{
@@ -244,16 +243,16 @@
 			 	}
 			});
 
-
-
 			loadAjax();
+
 			setInterval(function()
 			{
 				loadAjax();
-			}, 2000);
-			$('#closeModalButton').click(function() {
-				$('#modal1').closeModal();
-			});
+			}, 500);
+
+			/*$('#closeModalButton').click(function() {
+				$('#modalEdit').closeModal();
+			});*/
 		});
 
 		function sendChatMessage() {
@@ -265,7 +264,7 @@
 			else
 			{
 				$.ajax({
-					url: '<?php echo BASE_URL; ?>api/addmessage',
+					url: 'includes/add-message.php',
 					type: 'POST',
 					data: {
 						"message": newMessage,
@@ -285,7 +284,7 @@
 			return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
 		}
 
-		function loadSubscribers()
+		/*function loadSubscribers()
 		{
 			var url = "api/getSubscribers";
 
@@ -297,22 +296,24 @@
 					$(".subscribers").append(data).show("fadeIn");
 				}
 			});
-		}
+		}*/
 
 		function loadAjax()
 		{
-			var url = "api/getchat";
+			var url = "includes/getchat.php";
 			$.ajax({
-				url: '<?php echo BASE_URL; ?>' + url,
+				url: url,
 				type: 'GET',
 				data: { "group_id": "<?php echo $group_id; ?>" },
 				success: function (data) {
-					console.log(data);
-					if(data == "empty") {
-						var no_chat_msg = '<div class="col s12 center-align"><div class="card white black-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze chat groep, zeg eens hallo!</div></div></div>';
+					if(data == false) 
+					{
+						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze chat groep, zeg eens hallo!</div></div></div>';
+
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}
-					else {
+					else 
+					{
 						loadData(data);
 					}
 				},
@@ -328,18 +329,28 @@
 			for(i = 0; i < items.length; i++)
 			{
 				var extra_class = '';
-				if(this_user == items[i].user_id) {
+				if(this_user == items[i].user_id)
+				{
 					extra_class = 'Right';
 				}
-				var username = items[i].user_firstname + ' ' + items[i].user_lastname;
+				var username = items[i].user_name;
 				var chattime = items[i].format_time;
 				var chatdate = items[i].format_date;
 				var chatmessage = nl2br(items[i].chat_message, true);
 				var color = items[i].color;
-				output += '<div class="chatHistoryRow' + extra_class + '"><div class="chatHistoryBalloon black-text white"><span class="' + color + '">' + username + '</span></br>' + chatmessage + '</div><div class="chatRowDateContainer"><div class="chatRowTime">' + chattime + '</div><div class="chatRowDate">' + chatdate + '</div></div></div>';
+				output += '<div class="chatHistoryRow' + extra_class + '"><div class="chatHistoryBalloon black-text white"><span class="' + color + '">' + username + '</span></br>' + chatmessage + '</br></br><span style="font-size: 10px;">' + chattime + '&nbsp;&nbsp;&nbsp;' + chatdate + '</span></div></div>';
+					/*<div class="chatRowDateContainer"><div class="chatRowTime">' + chattime + '</div><div class="chatRowDate">' + chatdate + '</div></div>*/
 			}
 			document.getElementById('chatHistoryContainer').innerHTML = output;
-			$('#chatHistoryContainer').animate({scrollTop: $('#chatHistoryContainer').prop("scrollHeight")}, 300);
+			//$('#chatHistoryContainer').animate($('#chatHistoryContainer').prop("scrollHeight"), 500);
+
+			var timer = window.setInterval(function()
+			{
+			  	var elem = document.getElementById('chatHistoryContainer');
+			  	elem.scrollTop = elem.scrollHeight;
+			  	window.clearInterval(timer);
+			}, 500);
 		}
 	</script>
+
 <?php include "includes/footer.php";?>

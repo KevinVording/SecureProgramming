@@ -88,7 +88,7 @@
                             <input name="login" type="submit" class="btn btn-primary btn-block" value="Log in" style="margin: 0 auto;">
                         </div>
 
-                        <p class="center-align"><a href="register.php">Registreer</a></p> 
+                        <p class="center-align"><a href="register.php">Registreren</a></p> 
                     </form>
                     <!-- /.input-group -->
                 </div>
