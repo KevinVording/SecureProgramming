@@ -51,6 +51,7 @@ function getUserPermission($user_id, $group_id)
 
     if(mysqli_num_rows($result) <= 0)
     {
+        $rowPresent = false;
         return false;
     }
     else
@@ -60,12 +61,6 @@ function getUserPermission($user_id, $group_id)
             return $row['user_group_rights'];
         }
     }
-        $rowPresent = false;
-    }
-    else
-    {
-      $rowPresent = true;
-  }
 
   if($rowPresent == true)
   {
@@ -74,6 +69,7 @@ function getUserPermission($user_id, $group_id)
   }
   else
   {
+      $rowPresent = false;
       return false;
   }
 }
