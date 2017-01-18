@@ -42,9 +42,9 @@ function getUserPermission($user_id, $group_id)
     $rowPresent = false;
 
     $query = "SELECT user_group_rights
-              FROM  sw_user_group
-              WHERE user_id = '$user_id'
-              AND group_id = '$group_id'";
+    FROM  sw_user_group
+    WHERE user_id = '$user_id'
+    AND group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -60,6 +60,22 @@ function getUserPermission($user_id, $group_id)
             return $row['user_group_rights'];
         }
     }
+        $rowPresent = false;
+    }
+    else
+    {
+      $rowPresent = true;
+  }
+
+  if($rowPresent == true)
+  {
+      $row = mysqli_fetch_assoc($result);
+      return $row;
+  }
+  else
+  {
+      return false;
+  }
 }
 
 function getSingleChannel($channel_id)
@@ -106,13 +122,13 @@ function getChannelGroups()
 
     $text_array = array();
     $query = "SELECT sw_user.user_name, sw_user.user_firstname, sw_user.user_lastname, sw_user_group.user_id
-            FROM sw_user_group
-            INNER JOIN sw_user
-            ON sw_user_group.user_id = sw_user.user_id
-            INNER JOIN sw_group
-            ON sw_user_group.group_id = sw_group.group_id
-            WHERE sw_group.channel_id = '$channel_id'
-            GROUP BY sw_user_group.user_id";
+    FROM sw_user_group
+    INNER JOIN sw_user
+    ON sw_user_group.user_id = sw_user.user_id
+    INNER JOIN sw_group
+    ON sw_user_group.group_id = sw_group.group_id
+    WHERE sw_group.channel_id = '$channel_id'
+    GROUP BY sw_user_group.user_id";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -134,71 +150,71 @@ function getAllSubscribersFromGroup($group_id)
 {
     global $connection;
 
-		$sub_array = array();
-		$query =   "SELECT *
-					FROM sw_user_group, sw_user
-					WHERE sw_user_group.user_id = sw_user.user_id
-					AND sw_user_group.group_id = '" . $group_id . "'";
-		$result = mysqli_query($connection, $query);
-		while($row = mysqli_fetch_assoc($result)) {
-			$sub_array[] = $row;
-		}
-		if(empty($sub_array)) {
-			$sub_array = false;
-		}
-	return $sub_array;
+    $sub_array = array();
+    $query =   "SELECT *
+    FROM sw_user_group, sw_user
+    WHERE sw_user_group.user_id = sw_user.user_id
+    AND sw_user_group.group_id = '" . $group_id . "'";
+    $result = mysqli_query($connection, $query);
+    while($row = mysqli_fetch_assoc($result)) {
+     $sub_array[] = $row;
+ }
+ if(empty($sub_array)) {
+     $sub_array = false;
+ }
+ return $sub_array;
 }
 
 function getUserNames($user_id)
 {
   global $connection;
 
-	$query = "SELECT *
-          	FROM sw_user, sw_user_group
-          	WHERE sw_user.user_id = sw_user_group.user_id
-          	AND sw_user_group.group_id = '" . $user_id . "'";
+  $query = "SELECT *
+  FROM sw_user, sw_user_group
+  WHERE sw_user.user_id = sw_user_group.user_id
+  AND sw_user_group.group_id = '" . $user_id . "'";
 
-	$result = mysqli_query($connection, $query);
-	if(mysqli_num_rows($result) == 0)
-	{
-		return false;
-	}
+  $result = mysqli_query($connection, $query);
+  if(mysqli_num_rows($result) == 0)
+  {
+      return false;
+  }
 
-	while($row = mysqli_fetch_assoc($result))
-	{
-		$text_array[] = $row;
-	}
+  while($row = mysqli_fetch_assoc($result))
+  {
+      $text_array[] = $row;
+  }
 
-	return $text_array;
+  return $text_array;
 }
 
 function getSingleGroup($group_id)
 {
     global $connection;
 
-		$query = "SELECT *
-				FROM  sw_group
-				WHERE group_id = '" . $group_id . "'";
-		$result = mysqli_query($connection, $query);
+    $query = "SELECT *
+    FROM  sw_group
+    WHERE group_id = '" . $group_id . "'";
+    $result = mysqli_query($connection, $query);
 
-		if(mysqli_num_rows($result) <= 0) {
-			return false;
-		}
-		$row = mysqli_fetch_assoc($result);
+    if(mysqli_num_rows($result) <= 0) {
+     return false;
+ }
+ $row = mysqli_fetch_assoc($result);
 
-		return $row;
-	}
+ return $row;
+}
 
 function subscribedGroup($user_id, $group_id)
 {
     global $connection;
 
     $query = "SELECT sw_user_group.group_id, sw_user_group.user_id
-            FROM sw_user_group
-            INNER JOIN sw_group
-            ON sw_group.group_id = sw_user_group.group_id
-            WHERE sw_user_group.user_id = '$user_id'
-            AND sw_group.group_id = '$group_id'";
+    FROM sw_user_group
+    INNER JOIN sw_group
+    ON sw_group.group_id = sw_user_group.group_id
+    WHERE sw_user_group.user_id = '$user_id'
+    AND sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -239,10 +255,10 @@ function unsubscribeGroup($user_id, $group_id)
     global $connection;
 
     $query = "DELETE t1
-            FROM sw_user_group t1
-            LEFT JOIN sw_group t2 ON t2.group_id = t1.group_id
-            WHERE t1.user_id = '$user_id'
-            AND t2.group_id = '$group_id'";
+    FROM sw_user_group t1
+    LEFT JOIN sw_group t2 ON t2.group_id = t1.group_id
+    WHERE t1.user_id = '$user_id'
+    AND t2.group_id = '$group_id'";
 
     $result = mysqli_query($connection, $query);
 
@@ -256,8 +272,8 @@ function getPublicGroup($group_id)
     global $connection;
 
     $query = "SELECT sw_group.group_id
-            FROM sw_group
-            WHERE sw_group.group_id = '$group_id'";
+    FROM sw_group
+    WHERE sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
     $row = mysqli_num_rows($result);
 
@@ -310,8 +326,8 @@ function checkSubscription($group_id, $user_id)
     global $connection;
 
     $query = "SELECT * FROM sw_user_group
-            WHERE sw_user_group.group_id = '$group_id'
-            AND sw_user_group.user_id = '$user_id'";
+    WHERE sw_user_group.group_id = '$group_id'
+    AND sw_user_group.user_id = '$user_id'";
     $result = mysqli_query($connection, $query);
     $row = mysqli_num_rows($result);
 
@@ -328,7 +344,7 @@ function addPrivateSubscriptionGroup($group_id, $user_id, $user_group_rights)
     global $connection;
 
     $query = "INSERT INTO sw_user_group(group_id, user_id, user_group_rights)
-              VALUES ('$group_id', '$user_id', '$user_group_rights')";
+    VALUES ('$group_id', '$user_id', '$user_group_rights')";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -344,9 +360,9 @@ function getPrivateGroup($group_id)
     global $connection;
 
     $query = "SELECT sw_group.group_password, sw_group.group_id
-            FROM  sw_group
-            WHERE sw_group.group_id = '$group_id'
-            AND sw_group.group_password NOT LIKE ''";
+    FROM  sw_group
+    WHERE sw_group.group_id = '$group_id'
+    AND sw_group.group_password NOT LIKE ''";
     $result = mysqli_query($connection, $query);
     $row = mysqli_fetch_assoc($result);
 
@@ -363,8 +379,8 @@ function deleteGroup($group_id)
     global $connection;
 
     $query = "DELETE
-              FROM sw_group
-              WHERE sw_group.group_id = '$group_id'";
+    FROM sw_group
+    WHERE sw_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -412,7 +428,7 @@ function getAllChats($group_id)
         {
             $text_array[] = $row;
         }
-    }  
+    }
     return $text_array;
 }
 
