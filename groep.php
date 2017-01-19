@@ -26,6 +26,7 @@
 	$usernamesArray = getUsernames($group_id);
 	$group_item = getSingleGroup($group_id);
 	$chat_items = getAllChats($group_id);
+	$showAdmin = deleteGroupPermission($group_id);
 
 	$error_color = "green";
 	$errors = "";
@@ -128,26 +129,40 @@
 						</div>
 
 							<?php
-								if($groupMemberCount > 0) {
+								if($groupMemberCount > 0) 
+								{
 									echo '<ul class="collection with-header">';
 
-                  if($user_perm == 1)
-                  {
-                    foreach ($groupMembersArray as $key=>$member)
-  									{
-  										echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="deleteuser.php?groep=' . $member['group_id'] . '&delete=' . $member["user_id"] . '" class="right red-text italic">Verwijderen</a></li>';
-  									}
-  									echo '</ul>';
-                  }
-                  else
-                  {
-                    foreach ($groupMembersArray as $key=>$member)
-  									{
-  										echo '<li class="collection-item">'. $member["user_name"] .'</li>';
-  									}
-  									echo '</ul>';
-                  }
-
+				                  	if($user_perm == 1)
+				                  	{
+					                	foreach ($groupMembersArray as $key=>$member)
+										{											
+											if($showAdmin == $member["user_name"])
+											{
+												echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
+											}
+											else
+											{
+												echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="deleteuser.php?groep=' . $member['group_id'] . '&delete=' . $member["user_id"] . '" class="right red-text">Verwijderen</a></li>';	
+											}
+										}
+										echo '</ul>';
+				                  	}
+				                  	else
+				                  	{
+				    					foreach ($groupMembersArray as $key=>$member)
+										{
+											if($showAdmin == $member["user_name"])
+											{
+												echo '<li class="collection-item">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
+											}
+											else
+											{
+												echo '<li class="collection-item">'. $member["user_name"] .'</li>';
+											}
+										}
+										echo '</ul>';
+				                  	}
 								}
 								else
 								{
