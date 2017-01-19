@@ -2,28 +2,22 @@
 <?php include "includes/db.php"; ?>
 <?php include "config.php"; ?>
 
+
 <?php session_start(); ?>
 
 <?php
-if (!isset($_SESSION['user_id']))
-{
-	header("Location: index.php");
-}
-?>
-
-<?php
 $group_id = $_GET['groep'];
-
-
 
 $groupMembersArray = getAllSubscribersFromGroup($group_id);
 $groupMemberCount = count($groupMembersArray);
 $usernamesArray = getUsernames($group_id);
 $group_item = getSingleGroup($group_id);
 $chat_items = getAllChats($group_id);
+$showAdmin = deleteGroupPermission($group_id);
 
 $error_color = "green";
 $errors = "";
+
 ?>
 
 <?php include "includes/header.php"; ?>
@@ -49,17 +43,73 @@ $errors = "";
 				<div class="col s12 pageHeadColumn">
 					<div class="row">
 						<div class="col s6">
-							<h5 class="teal-text"><b>Chatgroep:</b> <?php echo $group_item['group_name']; ?></h5>
+							<h5 class="teal-text"><b>Direct message:</b> <?php echo $_SESSION["user_name2"]. ", " . $_SESSION['username']; ?></h5>
 						</div>
-						<div class="col s6" style="text-align: right;">
-							<a class="rightwaves-effect waves-light btn-floating hide-on-large-only modal-trigger <?php echo $core_colors['accent']; ?>" href="#modal1" style="margin: 0.82rem 0 0.656rem 0;">
-								<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groeps informatie
-							</a>
-							<a class="rightwaves-effect waves-light hide-on-med-and-down hide-on-small-only btn modal-trigger <?php echo $core_colors['accent']; ?>" href="#modal1" style="margin: 0.82rem 0 0.656rem 0;">
-								<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groeps informatie
-							</a>
+
+					</div>
+				</div>
+			</div>
+
+			<div id="modal1" class="modal">
+				<div class="modal-content">
+					<div class="row">
+						<div class="col s6 left-align">
+							<h4><?php echo '<div class="italic">Aantal deelnemers: ' . $groupMemberCount . '</div>'; ?></h4>
+						</div>
+						<div class="col s6 right-align">
+							<?php
+							if($user_perm == 1)
+							{
+								echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
+
+								echo '<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
+							}
+							?>
 						</div>
 					</div>
+
+					<?php
+					if($groupMemberCount > 0) 
+					{
+						echo '<ul class="collection with-header">';
+
+						if($user_perm == 1)
+						{
+							foreach ($groupMembersArray as $key=>$member)
+							{											
+								if($showAdmin == $member["user_name"])
+								{
+									echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
+								}
+								else
+								{
+									echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="deleteuser.php?groep=' . $member['group_id'] . '&delete=' . $member["user_id"] . '" class="right red-text">Verwijderen</a></li>';	
+								}
+							}
+							echo '</ul>';
+						}
+						else
+						{
+							foreach ($groupMembersArray as $key=>$member)
+							{
+								if($showAdmin == $member["user_name"])
+								{
+									echo '<li class="collection-item">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
+								}
+								else
+								{
+									echo '<li class="collection-item">'. $member["user_name"] .'</li>';
+								}
+							}
+							echo '</ul>';
+						}
+					}
+					else
+					{
+						echo '<div class="italic">Deze groepschat heeft nog geen deelnemers!</div>';
+					}
+					?>
+
 				</div>
 			</div>
 
@@ -67,7 +117,7 @@ $errors = "";
 			</div>
 
 			<div id="chatSendContainer" style="position: absolute; bottom: 0px; left: 0px; width: 100%; box-sizing: border-box; margin-bottom: 16px;">
-				<form name="addMessage" method="post" action="groep.php">
+				<form name="addMessage" method="post" action="singlechat.php">
 					<div class="row" style="margin: 0;">
 						<div class="valign-wrapper">
 							<ul class="collapsible subscribers" data-collapsible="accordion">
@@ -85,31 +135,6 @@ $errors = "";
 				</form>
 
 			</div>
-		</div>
-	</div>
-</div>
-
-<!-- Modal Edit group info -->
-<div id="modalEdit" class="modal">
-	<div class="modal-content">
-		<h4>Pas hier de groep aan</h4>
-		<p>Voer de benodidge gegevens in</p>
-		<div class="form-data">
-			<form method="post" id="form1">
-				<input type="text" id="groupName" name="groupName" value="<?php echo $group_item['group_name']; ?>" placeholder="Vul groep naam in"/>
-				<input type="text" id="groupDescription" name="groupDescription" value="<?php echo $group_item['group_description']; ?>" length="190" placeholder="Vul groep omschrijving in"/>
-				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul channel wachtwoord in"/>
-				<input type="password" id="groupPasswordCheck" name="groupPasswordCheck" placeholder="Herhaal uw wachtwoord in"/>
-				<input type="hidden" id="groupEdit" name="groupIDEdit" value="0"/>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<br>
-			<button class="btn <?php echo $core_colors['main']; ?> waves-effect waves-light" data-dismiss="modalEdit" form="form1" type="submit" name="editGroup">Wijzigen
-				<i class="material-icons right">send</i>
-			</button>
-			<input type="checkbox" name="checkPassword" value="emptyPassword" class="left filled-in" id="filled-in-box" form="form1" />
-			<label for="filled-in-box">Wachtwoord verwijderen</label>
 		</div>
 	</div>
 </div>
@@ -218,7 +243,7 @@ $errors = "";
 				success: function (data) {
 					if(data == false)
 					{
-						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze chat groep, zeg eens hallo!</div></div></div>';
+						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Stuur een direct message.</div></div></div>';
 
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}
