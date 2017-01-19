@@ -16,6 +16,7 @@
 
 <?php
 	$groupsArray = getChannelGroups();
+	
 	//$user_perm = getUserPermission($_SESSION['user_id']);
 
 	$error_color = "green";
@@ -38,7 +39,17 @@
 			$subbed = subscribedGroup($_SESSION['user_id'], $gid);
 			$verifyHashpassword = verifyPassword($submittedPwd, $password);
 
-			if($verifyHashpassword == true)
+			$usersAlreadyInGroup = getAllSubscribersFromGroup($grid);
+		    if($usersAlreadyInGroup == false)
+		    {
+		  		$groupRights = 1;
+		    }
+		    else 
+		    {
+		      $groupRights = 2;
+		    }
+
+			if($verifyHashpassword != false)
 			{ // if passwords are equal
 				if($subbed == false)
 				{
@@ -69,14 +80,16 @@
 		$grid = escapeString($_POST['groupIDPublic']); // save sent groupid
 		//$groupData = getPublicGroup($grid);
 		//$gid = $groupData['group_id'];
-    $usersAlreadyInGroup = getAllSubscribersFromGroup($grid);
-    if($usersAlreadyInGroup == false)
-    {
-  		$groupRights = 1;
-    }
-    else {
-      $groupRights = 2;
-    }
+	    $usersAlreadyInGroup = getAllSubscribersFromGroup($grid);
+	    if($usersAlreadyInGroup == false)
+	    {
+	  		$groupRights = 1;
+	    }
+	    else 
+	    {
+	      $groupRights = 2;
+	    }
+
 		$subbed = subscribedGroup($_SESSION['user_id'], $grid);
 
 		if($subbed == false)
@@ -123,10 +136,11 @@
 			}
 			else
 			{
-				createGroup($groupName, $groupDescription, $hashpassword);
-        $last_id = $connection->insert_id;
-      	$groupRights = 1;
-        signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
+				createGroup($groupName, $groupDescription, $hashpassword, $_SESSION['username']);
+        
+        		$last_id = $connection->insert_id;
+      			$groupRights = 1;
+        		signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
         
 				header("Location: groepen.php");
 			}
@@ -139,10 +153,11 @@
 
 			$hashpassword = generateHash($groupPassword);
 
-			createGroup($groupName, $groupDescription, $groupPassword);
-      $last_id = $connection->insert_id;
-      $groupRights = 1;
-      signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
+			createGroup($groupName, $groupDescription, $groupPassword, $_SESSION['username']);
+		    
+		    $last_id = $connection->insert_id;
+		    $groupRights = 1;
+		    signupPrivateGroup($last_id, $_SESSION['user_id'], $groupRights);
 
 			header("Location: groepen.php");
 		}
@@ -188,44 +203,68 @@
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
 							<div class="col s6">
-								<h5>Chats</h5>
+								<h5 class="teal-text">Chats</h5>
 							</div>
 							<div class="col s6" style="text-align: right;">
 								<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect waves-light btn-floating hide-on-large-only <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
 									<i class="material-icons left">edit</i>Groep aanmaken
 								</a>
 								<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect hide-on-med-and-down hide-on-small-only waves-light btn <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
-									<i class="material-icons left"></i>Groep aanmaken
+									<i class="material-icons left">edit</i>Groep aanmaken
 								</a>
 							</div>
 						</div>
 					</div>
 
 					<?php foreach((array)$groupsArray as $key => $groups): ?>
-						<?php $subscribed = subscribedGroup($_SESSION['user_id'], $groups['group_id']); ?>
+						<?php $subscribed = subscribedGroup($_SESSION['user_id'], $groups['group_id']); 
+							  $groupMembersArray = getAllSubscribersFromGroup($groups['group_id']);
+							  $groupMemberCount = count($groupMembersArray);
+							  $ownGroupPermission = deleteGroupPermission($groups['group_id']); ?>
 						<div class="col s12 m6 l6">
 						<?php if ($groups != false) { ?>
 							<div class="card white darken-1 hoverable">
-								<div class="card-content black-text" style="height: 200px;">
-									<span class="card-title truncate"><?php echo $groups['group_name']; ?></span>
-										<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groep te verwijderen" style="float: right;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
+								<div class="card-content black-text" style="height: 200px; position: relative;">
+									<span class="card-title"><?php echo $groups['group_name']; ?></span>
 
-									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="Gesloten groep" style="float: right;"><?php echo $groups['group_password'] === "" ? '' : 'lock_outline'; ?></i>
+									<?php
+										if($ownGroupPermission == escapeString($_SESSION['username']))
+										{ ?>
+											<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groep te verwijderen" style="float: right; margin-top: 10px;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
+										<?php }
+									?>			
+
+									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="<?php echo $groups['group_password'] === "" ? 'Open groep' : 'Gesloten groep'; ?>" style="float: right; margin-top: 10px;"><?php echo $groups['group_password'] === "" ? 'lock_open' : 'lock_outline'; ?></i>	
 
 									<p><?php echo $groups['group_description']; ?></p>
+
+									<span style="font-size: 14px; position: absolute; bottom: 0; right: 20px; float: right;"><b><?php echo $groupMemberCount; ?></b>/8 deelnemer(s)</span>
+									
 
 								</div>
 								<div class="card-action">
 									<?php
 									if($subscribed == false)
 									{
-										echo $groups['group_password'] === "" ? '<button class="btn ' . $core_colors['main'] . ' modal-trigger modalButtonPublic" data-target="modalPublic" data-publicid="' . $groups['group_id'] . '">Aansluiten</button>'
+										if ($groupMemberCount != 8)
+										{
+											echo $groups['group_password'] === "" ? '<button class="btn ' . $core_colors['main'] . ' modal-trigger modalButtonPublic" data-target="modalPublic" data-publicid="' . $groups['group_id'] . '">Aansluiten</button>'
 											: '<button class="btn ' . $core_colors['main'] . ' modal-trigger modalButton" data-target="modal1" data-groupid="' . $groups['group_id'] . '">Aansluiten</button>';
+										}
+										else
+										{
+											echo $groups['group_password'] === "" ? '<button class="btn ' . $core_colors['main'] . ' disabled" >Groep is vol</button>'
+											: '<button class="btn ' . $core_colors['main'] . ' disabled">Groep is vol</button>';
+										}
+										
 									}
 									else
 									{
 										echo '<a class="waves-effect waves-light btn" href="groep.php?groep=' . $groups['group_id'] . '">Openen</a>';
-										echo '<a style="color: #F44336; font-weight: bold;" class="card-title unsub modalUnsubButton clickableDiv ' . $core_colors['accent'] . '-text" data-target="modalUnsub" data-unsubid="' . $groups['group_id'] . '">Afmelden</a>';
+										if($ownGroupPermission != escapeString($_SESSION['username']))
+										{ 
+											echo '<a style="color: #F44336; font-weight: bold;" class="card-title unsub modalUnsubButton clickableDiv ' . $core_colors['accent'] . '-text" data-target="modalUnsub" data-unsubid="' . $groups['group_id'] . '">Afmelden</a>';
+										}
 									}
 									?>
 								</div>
@@ -236,8 +275,8 @@
 								<div class="row errorRow">
 									<div class="col s12">&nbsp;</div>
 										<div class="col s12 center-align">
-											<div class="card white <?php echo $error_color; ?>-text text-darken-2" style="padding: 16px 0;">
-												Er zijn nog geen groepen aagemaakt!
+											<div class="card white red-text text-darken-2" style="padding: 16px 0;">
+												Er zijn nog geen groepen aangemaakt
 											</div>
 										</div>
 									<div class="col s12">&nbsp;</div>
@@ -259,6 +298,7 @@
     			<form method="post" id="form2" action="groepen.php">
     				<input type="text" id="groupName" name="groupName" placeholder="Vul groep naam in"/>
     				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Vul groep omschrijving in"/>
+    				<i class="material-icons prefix clickableDiv tooltipped" data-position="top" data-tooltip="Laat de wachtwoord leeg voor een open groep">info</i>
     				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul groep wachtwoord in"/>
     			</form>
     		</div>

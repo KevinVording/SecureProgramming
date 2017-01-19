@@ -7,7 +7,6 @@
       <div class="col s6">
         <ul class="right">
           <li><a href="logout.php" class="grey-text text-lighten-4 underline">Uitloggen</a></li>
-          <li><a href="register.php" class="grey-text text-lighten-4 underline">Registereren</a></li>
         </ul>
       </div>
     </div>

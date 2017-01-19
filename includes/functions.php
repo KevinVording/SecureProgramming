@@ -150,7 +150,7 @@ function getAllSubscribersFromGroup($group_id)
     $query =   "SELECT *
     FROM sw_user_group, sw_user
     WHERE sw_user_group.user_id = sw_user.user_id
-    AND sw_user_group.group_id = '" . $group_id . "'";
+    AND sw_user_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
     while($row = mysqli_fetch_assoc($result)) {
      $sub_array[] = $row;
@@ -225,7 +225,7 @@ function subscribedGroup($user_id, $group_id)
     }
 }
 
-function createGroup($group_name, $group_description, $group_password)
+function createGroup($group_name, $group_description, $group_password, $user_name)
 {
     global $connection;
 
@@ -233,11 +233,11 @@ function createGroup($group_name, $group_description, $group_password)
 
     if(empty($group_password))
     {
-        $query = "INSERT INTO sw_group (group_name, group_description, created_at) VALUES ('$group_name', '$group_description','$date')";
+        $query = "INSERT INTO sw_group (group_name, group_description, created_by) VALUES ('$group_name', '$group_description', '$user_name')";
     }
     else
     {
-        $query = "INSERT INTO sw_group (group_name, group_description, group_password, created_at) VALUES ('$group_name', '$group_description', '".generateHash($groupPassword)."', '$date')";
+        $query = "INSERT INTO sw_group (group_name, group_description, group_password, created_by) VALUES ('$group_name', '$group_description', '$group_password', '$user_name')";
     }
     $result = mysqli_query($connection, $query);
 
@@ -477,6 +477,31 @@ function editGroupPassword($group_id)
     confirmQuery($result);
 
     return $result;
+}
+
+function deleteGroupPermission($group_id)
+{
+    global $connection;
+
+    $query = "SELECT * 
+    FROM sw_group
+    WHERE group_id = '$group_id'";
+    
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    if(escapeString(mysqli_num_rows($result)) <= 0)
+    {
+        return false;
+    }
+    else
+    {
+        while($row = mysqli_fetch_assoc($result))
+        {
+            return $row['created_by'];
+        }
+    }
 }
 
 function usernameExists($username)
