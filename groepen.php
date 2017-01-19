@@ -54,11 +54,11 @@
 				if($subbed == false)
 				{
 					signupPrivateGroup($gid, $_SESSION['user_id'], $groupRights);
-					$errors .= "U bent succesvol aangemeld voor deze groep!";
+					$errors .= "U bent succesvol aangemeld voor deze groepschat!";
 				}
 				else
 				{
-					$errors .= "U heeft zich al aangemeld voor deze groep!";
+					$errors .= "U heeft zich al aangemeld voor deze groepschat!";
 					$error_color = "red";
 				}
 			}
@@ -95,11 +95,11 @@
 		if($subbed == false)
 		{
 			signupPrivateGroup($grid, $_SESSION['user_id'], $groupRights);
-			$errors .= "U bent succesvol aangemeld voor deze groep!";
+			$errors .= "U bent succesvol aangemeld voor deze groepschat!";
 		}
 		else
 		{
-			$errors .= "U heeft zich al aangemeld voor deze groep!";
+			$errors .= "U heeft zich al aangemeld voor deze groepschat!";
 			$error_color = "red";
 		}
 	}
@@ -131,7 +131,7 @@
 
 			if (groupnameExists($groupName))
 			{
-				$errors .= "Groepsnaam bestaat al!";
+				$errors .= "Groepschat bestaat al!";
 				$error_color = "red";
 			}
 			else
@@ -163,7 +163,7 @@
 		}
 		else
 		{
-			$errors .= "Groepsnaam en omschrijving zijn verplicht!";
+			$errors .= "Groepschat naam en omschrijving zijn verplicht!";
 			$error_color = "red";
 		}
 	}
@@ -203,14 +203,14 @@
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
 							<div class="col s6">
-								<h5 class="teal-text">Chats</h5>
+								<h5 class="teal-text">Groepschats</h5>
 							</div>
 							<div class="col s6" style="text-align: right;">
 								<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect waves-light btn-floating hide-on-large-only <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
-									<i class="material-icons left">edit</i>Groep aanmaken
+									<i class="material-icons left">edit</i>Groepschat aanmaken
 								</a>
 								<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect hide-on-med-and-down hide-on-small-only waves-light btn <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
-									<i class="material-icons left">edit</i>Groep aanmaken
+									<i class="material-icons left">edit</i>Groepschat aanmaken
 								</a>
 							</div>
 						</div>
@@ -230,11 +230,11 @@
 									<?php
 										if($ownGroupPermission == escapeString($_SESSION['username']))
 										{ ?>
-											<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groep te verwijderen" style="float: right; margin-top: 10px;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
+											<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groepschat te verwijderen" style="float: right; margin-top: 10px;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
 										<?php }
 									?>			
 
-									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="<?php echo $groups['group_password'] === "" ? 'Open groep' : 'Gesloten groep'; ?>" style="float: right; margin-top: 10px;"><?php echo $groups['group_password'] === "" ? 'lock_open' : 'lock_outline'; ?></i>	
+									<i class="small material-icons right-align tooltipped" data-position="top" data-tooltip="<?php echo $groups['group_password'] === "" ? 'Open groepschat' : 'Gesloten groepschat'; ?>" style="float: right; margin-top: 10px;"><?php echo $groups['group_password'] === "" ? 'lock_open' : 'lock_outline'; ?></i>	
 
 									<p><?php echo $groups['group_description']; ?></p>
 
@@ -253,8 +253,8 @@
 										}
 										else
 										{
-											echo $groups['group_password'] === "" ? '<button class="btn ' . $core_colors['main'] . ' disabled" >Groep is vol</button>'
-											: '<button class="btn ' . $core_colors['main'] . ' disabled">Groep is vol</button>';
+											echo $groups['group_password'] === "" ? '<button class="btn ' . $core_colors['main'] . ' disabled" >Groepschat is vol</button>'
+											: '<button class="btn ' . $core_colors['main'] . ' disabled">Groepschat is vol</button>';
 										}
 										
 									}
@@ -276,7 +276,7 @@
 									<div class="col s12">&nbsp;</div>
 										<div class="col s12 center-align">
 											<div class="card white red-text text-darken-2" style="padding: 16px 0;">
-												Er zijn nog geen groepen aangemaakt
+												Er zijn nog geen groepschats aangemaakt
 											</div>
 										</div>
 									<div class="col s12">&nbsp;</div>
@@ -292,14 +292,14 @@
 <!-- Modal Create group -->
 <div id="modal2" class="modal">
 	  <div class="modal-content">
-	    <h4>Maak een groep</h4>
-		    <p>Voer de benodidge gegevens in</p>
+	    <h4>Maak een groepschat</h4>
+		    <p><b>Voer de benodidge gegevens in</b></p>
 	      <div class="form-data">
     			<form method="post" id="form2" action="groepen.php">
-    				<input type="text" id="groupName" name="groupName" placeholder="Vul groep naam in"/>
-    				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Vul groep omschrijving in"/>
-    				<i class="material-icons prefix clickableDiv tooltipped" data-position="top" data-tooltip="Laat de wachtwoord leeg voor een open groep">info</i>
-    				<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul groep wachtwoord in"/>
+    				<input type="text" id="groupName" name="groupName" placeholder="Groepschat naam"/>
+    				<input type="text" id="groupDescription" name="groupDescription" length="190" placeholder="Groepschat omschrijving"/>
+    				<i class="material-icons prefix clickableDiv tooltipped" data-position="top" data-tooltip="Laat de wachtwoord leeg voor een open groepschat">info</i>
+    				<input type="password" id="groupPassword" name="groupPassword" placeholder="Groepschat wachtwoord"/>
     			</form>
     		</div>
       <br>
@@ -315,11 +315,11 @@
 <!-- Modal Join private group -->
 <div id="modal1" class="modal">
 	  <div class="modal-content">
-	    <h4>Aansluiten Groep</h4>
-		<p>Dit is een prive groep. Vul het wachtwoord in om u aan te sluiten.</p>
+	    <h4>Aansluiten groepschat</h4>
+		<p>Dit is een prive groepschat. Vul het wachtwoord in om u aan te sluiten.</p>
 		<div class="form-data">
 				<form method="post" id="form1">
-					<input type="password" id="groupPwd" name="password" placeholder="Vul groep wachtwoord in"/>
+					<input type="password" id="groupPwd" name="password" placeholder="Groepschat wachtwoord"/>
 					<input type="hidden" id="groupValue" name="groupID" value="0"/>
 				</form>
 		</div>
@@ -334,8 +334,8 @@
 <!-- Modal Join public group -->
 <div id="modalPublic" class="modal">
 	  <div class="modal-content">
-	    <h4>Aansluiten Groep</h4>
-		<p>Dit is een open groep. Om u aan te melden, klik dan op de aanmeld knop hier beneden.</p>
+	    <h4>Aansluiten groepschat</h4>
+		<p>Dit is een open Groepschat. Om u aan te melden, klik dan op de aanmeld knop hier beneden.</p>
 		<div class="form-data">
 			<form method="post" id="form3">
 				<input type="hidden" id="groupValuePublic" name="groupIDPublic" value="0"/>
@@ -352,8 +352,8 @@
 <!-- Modal delete group -->
 <div id="modalDelete" class="modal">
 	  <div class="modal-content">
-	    <h4>Groep verwijderen</h4>
-		<p>Weet u zeker dat u deze groep wilt verwijderen?</p>
+	    <h4>Groepschat verwijderen</h4>
+		<p>Weet u zeker dat u deze groepschat wilt verwijderen?</p>
 		<div class="form-data">
 			<form method="post" id="form4">
 				<input type="hidden" id="groupDelete" name="groupIDDelete" value="0"/>
@@ -370,7 +370,7 @@
 <!-- Modal unsubscribe group -->
 <div id="modalUnsub" class="modal">
 	  <div class="modal-content">
-	    <h4>Groep afmelden</h4>
+	    <h4>Groepschat afmelden</h4>
 		<p>Weet u zeker dat u zich wilt afmelden?</p>
 		<div class="form-data">
 			<form method="post" id="form5">

@@ -38,7 +38,8 @@
 	{
 		if(isset($_POST['groupName']) && isset($_POST['groupDescription']))
 		{
-			if($user_perm != false && $user_perm == 1) {
+			if($user_perm != false && $user_perm == 1) 
+			{
 				$grid = escapeString($_POST['groupIDEdit']);
 
 				$groupName = escapeString($_POST['groupName']);
@@ -48,26 +49,45 @@
 
 				$hashpassword = generateHash($groupPassword);
 
-				if($groupPassword == $groupPasswordCheck)
+				if (!empty($groupName) && !empty($groupDescription)) 
 				{
-					editGroup($grid, $groupName, $groupDescription, $hashpassword);
+					if (groupnameExists($groupName))
+					{
+						$errors .= "Groepschat bestaat al!";
+						$error_color = "red";
+					}
+					else
+					{
+						if($groupPassword == $groupPasswordCheck)
+						{
+							editGroup($grid, $groupName, $groupDescription, $hashpassword);
 
-					$errors .= "U heeft de groep succesvol gewijzigd!";
+							$errors .= "U heeft de groepschat succesvol gewijzigd!";
+						}
+						else
+						{
+							$errors .= "Wachtwoorden komen niet overeen!";
+							$error_color = "red";
+						}
+
+						if(isset($_POST['checkPassword']) && isset($_POST['checkPassword']) == "emptyPassword")
+						{
+							editGroupPassword($grid);
+						}
+					}
+					
 				}
 				else
 				{
-					$errors .= "Wachtwoorden komen niet overeen!";
+					$errors .= "Groepschat naam en omschrijving zijn verplicht!";
 					$error_color = "red";
 				}
-
-				if(isset($_POST['checkPassword']) && isset($_POST['checkPassword']) == "emptyPassword")
-				{
-					editGroupPassword($grid);
-				}
+				
 			}
 			else
 			{
-				echo "U heeft geen rechten tot deze actie!";
+				$errors .= "U heeft geen rechten tot deze actie!";
+				$error_color = "red";
 			}
 		}
 	}
@@ -96,14 +116,14 @@
 					<div class="col s12 pageHeadColumn">
 						<div class="row">
 							<div class="col s6">
-								<h5 class="teal-text"><b>Chatgroep:</b> <?php echo $group_item['group_name']; ?></h5>
+								<h5 class="teal-text"><b>Groepschat:</b> <?php echo $group_item['group_name']; ?></h5>
 							</div>
 							<div class="col s6" style="text-align: right;">
 								<a class="rightwaves-effect waves-light btn-floating hide-on-large-only modal-trigger <?php echo $core_colors['accent']; ?>" href="#modal1" style="margin: 0.82rem 0 0.656rem 0;">
-									<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groeps informatie
+									<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groepschat informatie
 								</a>
 								<a class="rightwaves-effect waves-light hide-on-med-and-down hide-on-small-only btn modal-trigger <?php echo $core_colors['accent']; ?>" href="#modal1" style="margin: 0.82rem 0 0.656rem 0;">
-									<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groeps informatie
+									<i class="material-icons" style="vertical-align: bottom;">info_outline</i> Groepschat informatie
 								</a>
 							</div>
 						</div>
@@ -166,7 +186,7 @@
 								}
 								else
 								{
-									echo '<div class="italic">Deze groep heeft nog geen deelnemers!</div>';
+									echo '<div class="italic">Deze groepschat heeft nog geen deelnemers!</div>';
 								}
 							?>
 
@@ -202,14 +222,15 @@
 	<!-- Modal Edit group info -->
 	<div id="modalEdit" class="modal">
 		  <div class="modal-content">
-		    <h4>Pas hier de groep aan</h4>
-			<p>Voer de benodidge gegevens in</p>
+		    <h4>Pas hier de groepschat aan</h4>
+			<p><b>Voer de benodidge gegevens in</b></p>
 			<div class="form-data">
 				<form method="post" id="form1">
-					<input type="text" id="groupName" name="groupName" value="<?php echo $group_item['group_name']; ?>" placeholder="Vul groep naam in"/>
-					<input type="text" id="groupDescription" name="groupDescription" value="<?php echo $group_item['group_description']; ?>" length="190" placeholder="Vul groep omschrijving in"/>
-					<input type="password" id="groupPassword" name="groupPassword" placeholder="Vul channel wachtwoord in"/>
-					<input type="password" id="groupPasswordCheck" name="groupPasswordCheck" placeholder="Herhaal uw wachtwoord in"/>
+					<input type="text" id="groupName" name="groupName" value="<?php echo $group_item['group_name']; ?>" placeholder="Groepschat naam"/>
+					<input type="text" id="groupDescription" name="groupDescription" value="<?php echo $group_item['group_description']; ?>" length="190" placeholder="Groepschat omschrijving"/>
+					<i class="material-icons prefix clickableDiv tooltipped" data-position="top" data-tooltip="Laat de wachtwoord leeg voor een open groepschat">info</i>
+					<input type="password" id="groupPassword" name="groupPassword" placeholder="Groepschat wachtwoord"/>
+					<input type="password" id="groupPasswordCheck" name="groupPasswordCheck" placeholder="Herhaal uw wachtwoord"/>
 					<input type="hidden" id="groupEdit" name="groupIDEdit" value="0"/>
 				</form>
 			</div>
@@ -328,7 +349,7 @@
 				success: function (data) {
 					if(data == false)
 					{
-						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze chat groep, zeg eens hallo!</div></div></div>';
+						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze Groepschat!</div></div></div>';
 
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}
