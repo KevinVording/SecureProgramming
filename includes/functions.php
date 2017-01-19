@@ -62,8 +62,8 @@ function getUserPermission($user_id, $group_id)
         }
     }
 
-  if($rowPresent == true)
-  {
+    if($rowPresent == true)
+    {
       $row = mysqli_fetch_assoc($result);
       return $row;
   }
@@ -405,11 +405,41 @@ function getAllChats($group_id)
     global $connection;
 
     $query = "SELECT *
-              FROM  sw_chat, sw_group, sw_user
-              WHERE sw_chat.group_id = sw_group.group_id
-              AND sw_chat.user_id = sw_user.user_id
-              AND sw_chat.group_id = '$group_id'
-              ORDER BY timemessage";
+    FROM  sw_chat, sw_group, sw_user
+    WHERE sw_chat.group_id = sw_group.group_id
+    AND sw_chat.user_id = sw_user.user_id
+    AND sw_chat.group_id = '$group_id'
+    ORDER BY timemessage";
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    if(escapeString(mysqli_num_rows($result) == 0))
+    {
+        return false;
+    }
+    else
+    {
+        while($row = mysqli_fetch_assoc($result))
+        {
+            $text_array[] = $row;
+        }
+    }
+    return $text_array;
+}
+
+function getAllDmChats()
+{
+    global $connection;
+
+    $user_one_id = $_SESSION['user_id'];
+    $user_two_id = $_GET['dm_user'];
+
+    $query = "SELECT chat_message
+    FROM  sw_single_chat
+    WHERE sw_single_chat.user_one_id = '$user_one_id'
+    AND sw_single_chat.user_two_id = '$user_two_id'
+    ORDER BY timemessage";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -441,6 +471,19 @@ function addMessage($chat_message, $user_id, $group_id, $db_link)
     return $result;
 }
 
+function addDmMessage($chat_message, $user_one_id, $user_two_id, $db_link)
+{
+    global $connection;
+
+    $query = "INSERT INTO sw_single_chat(chat_message, user_one_id, user_two_id)";
+    $query .= "VALUES ('$chat_message', '$user_one_id', '$user_two_id')";
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    return $result;
+}
+
 function editGroup($group_id, $group_name, $group_description, $group_password)
 {
     global $connection;
@@ -448,14 +491,14 @@ function editGroup($group_id, $group_name, $group_description, $group_password)
     if (empty($group_password))
     {
         $query = "UPDATE sw_group
-                  SET group_name = '$group_name', group_description = '$group_description'
-                  WHERE group_id = '$group_id'";
+        SET group_name = '$group_name', group_description = '$group_description'
+        WHERE group_id = '$group_id'";
     }
     else
     {
         $query = "UPDATE sw_group
-                  SET group_name = '$group_name', group_description = '$group_description', group_password = '$group_password'
-                  WHERE group_id = '$group_id'";
+        SET group_name = '$group_name', group_description = '$group_description', group_password = '$group_password'
+        WHERE group_id = '$group_id'";
     }
     $result = mysqli_query($connection, $query);
 
@@ -469,8 +512,8 @@ function editGroupPassword($group_id)
     global $connection;
 
     $query = "UPDATE sw_group
-              SET group_password = ''
-              WHERE group_id = '$group_id'";
+    SET group_password = ''
+    WHERE group_id = '$group_id'";
 
     $result = mysqli_query($connection, $query);
 
@@ -609,8 +652,8 @@ function deleteUserFromGroup($user_id, $group_id)
   global $connection;
 
   $query = "DELETE FROM sw_user_group
-            WHERE sw_user_group.user_id = '$user_id'
-            AND sw_user_group.group_id = '$group_id'";
+  WHERE sw_user_group.user_id = '$user_id'
+  AND sw_user_group.group_id = '$group_id'";
   $result = mysqli_query($connection, $query);
 
   confirmQuery($result);

@@ -8,11 +8,13 @@
 <?php
 $group_id = $_GET['groep'];
 
+$_SESSION['user_two_id'] = $_GET['dm_user'];
+
 $groupMembersArray = getAllSubscribersFromGroup($group_id);
 $groupMemberCount = count($groupMembersArray);
 $usernamesArray = getUsernames($group_id);
 $group_item = getSingleGroup($group_id);
-$chat_items = getAllChats($group_id);
+$chat_items = getAllDmChats($group_id);
 $showAdmin = deleteGroupPermission($group_id);
 
 $error_color = "green";
@@ -43,7 +45,7 @@ $errors = "";
 				<div class="col s12 pageHeadColumn">
 					<div class="row">
 						<div class="col s6">
-							<h5 class="teal-text"><b>Direct message:</b> <?php echo $_SESSION["user_name2"]. ", " . $_SESSION['username']; ?></h5>
+							<h5 class="teal-text"><b>Direct message:</b> <?php ?></h5>
 						</div>
 
 					</div>
@@ -199,7 +201,7 @@ $errors = "";
 		else
 		{
 			$.ajax({
-				url: 'includes/add-message.php',
+				url: 'includes/add-dm-message.php',
 				type: 'POST',
 				data: {
 					"message": newMessage,
@@ -235,7 +237,7 @@ $errors = "";
 
 		function loadAjax()
 		{
-			var url = "includes/getchat.php";
+			var url = "includes/get-dm-chat.php";
 			$.ajax({
 				url: url,
 				type: 'GET',

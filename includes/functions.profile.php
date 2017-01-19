@@ -57,6 +57,7 @@ function showUsernames($user_id, $connection) {
 
     $_SESSION['user_name2'] = $row['user_name'];
 
+
     echo $row['user_name']."&nbsp";
     echo"</br>";
     echo"<a href='singlechat.php?groep=$group_id&dm_user=$user_id' class='waves-effect waves-light btn'>Direct Message</a>";
