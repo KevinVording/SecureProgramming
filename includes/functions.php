@@ -479,11 +479,39 @@ function editGroupPassword($group_id)
     return $result;
 }
 
-function deleteGroupPermission($group_id)
+function deleteGroupPermission($group_id, $user_id)
 {
     global $connection;
 
-    $query = "SELECT * 
+    $query = "SELECT group_id, user_id 
+    FROM sw_user_group
+    WHERE group_id = '$group_id'
+    AND user_id = '$user_id'
+    AND user_group_rights = 1";
+    
+    $result = mysqli_query($connection, $query);
+
+    confirmQuery($result);
+
+    if(escapeString(mysqli_num_rows($result)) <= 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+        /*while($row = mysqli_fetch_assoc($result))
+        {
+            return $row['created_by'];
+        }*/
+    }
+}
+
+function showAdmin($group_id)
+{
+    global $connection;
+
+    $query = "SELECT created_by
     FROM sw_group
     WHERE group_id = '$group_id'";
     
