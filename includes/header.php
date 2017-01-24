@@ -35,6 +35,7 @@
     <script type="text/javascript" src="js/jquery.tinymce.min.js"></script>
     <script type="text/javascript" src="js/materialize.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/register.js"></script>
 </head>
 
 <body>
