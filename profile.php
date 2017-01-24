@@ -1,29 +1,16 @@
-<?php
 
-session_start();
-
-$core_title_prefix = $_SESSION['firstname'] . ' ' . $_SESSION['lastname'];
-
-if(isset($_POST['theme_id'])) {
-	if(is_numeric($_POST['theme_id'])){
-		setUserTheme($_SESSION['user_id'], $_POST['theme_id'], $xo);
-		header("Location: " . BASE_URL . "profiel");
-		exit();
-	}
-}
-
-
-?>
-<?php include "includes/header.php"; ?>
 <?php include "includes/functions.php"; ?>
 <?php include "includes/functions.profile.php"; ?>
 <?php include "includes/database.php"; ?>
 <?php include "includes/db.php"; ?>
 <?php
-setSession($_SESSION['user_id'], $_SESSION['username'],$_SESSION['firstname'], $_SESSION['lastname'], $_SESSION['email'], $_SESSION['status']);
 
+session_start();
 
 ?>
+
+<?php include "includes/header.php"; ?>
+<?php include "includes/navbar.php"; ?>
 
 <div class="container">
 
@@ -36,28 +23,48 @@ setSession($_SESSION['user_id'], $_SESSION['username'],$_SESSION['firstname'], $
 				<ul class="collapsible" data-collapsible="accordion">
 					<li>
 						<?php $countChannel = countTotalUsers($_SESSION['user_id'], $connection); ?>
-						<div class="collapsible-header"><i class="material-icons">view_list</i>Gebruikers (<?php echo $countChannel; ?>)</div>
+						<div class="collapsible-header"><i class="material-icons">view_list</i>Openstaande Direct Messages (<?php echo $countChannel; ?>)</div>
 						<div class="collapsible-body">
-							<div class="listItem"><?php showUsernames($_SESSION['user_id'], $connection)?></div>
+							<div class="listItem"><?php showExistingUsernames($_SESSION['user_id'], $connection)?></div>
 						</div>
 					</li>
+				</ul>
+				<div class="col s6" style="text-align: right;">
+					<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect waves-light btn-floating hide-on-large-only <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
+						<i class="material-icons left">edit</i>direct message aanmaken
+					</a>
+					<a style="margin: 0.82rem 0 0.656rem 0;" class="waves-effect hide-on-med-and-down hide-on-small-only waves-light btn <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
+						<i class="material-icons left">edit</i>direct message aanmaken
+					</a>
+				</div>
+				<div id="modal2" class="modal">
+					<div class="modal-content">
+						<h4>Maak een Direct Message</h4>
+						<p><b>Selecteer een gebruiker</b></p>
+						<?php showNonExistingUsernames($_SESSION['user_id'], $connection); ?>
+						<br>
+						
+					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
 
-	<?php include "includes/footer.php";?>
 
-	<script>
-		$(document).ready(function() {
-			$(".theme_item").on("click", function(e) {
-				$('#themeInput').val($(this).attr('data-theme'));
-				$('#formTheme').submit();
-			});
-			$('.dropdown-theme').dropdown({
-				constrain_width: false,
-			}
-			);
+
+</div>
+
+<?php include "includes/footer.php";?>
+
+<script>
+	$(document).ready(function() {
+		$(".theme_item").on("click", function(e) {
+			$('#themeInput').val($(this).attr('data-theme'));
+			$('#formTheme').submit();
 		});
-	</script>
+		$('.dropdown-theme').dropdown({
+			constrain_width: false,
+		}
+		);
+	});
+</script>
