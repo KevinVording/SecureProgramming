@@ -5,13 +5,15 @@
 <?php session_start(); ?>
 
 <?php
-	if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['group_id']))
-	{
-		$message = escapeString($_POST['message']);
-		$user_id = escapeString($_SESSION['user_id']);
-		$group_id = escapeString($_POST['group_id']);
+if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['group_id']))
+{
+	$message = escapeString($_POST['message']);
+	$user_id = escapeString($_SESSION['user_id']);
+	$group_id = escapeString($_POST['group_id']);
 
-		$newMessage = addMessage($message, $user_id, $group_id);
-		var_dump($newMessage);
-	}
+	
+
+	$newMessage = addMessage('', $message, $user_id, $group_id);
+	var_dump($newMessage);
+}
 ?>

@@ -1,21 +1,25 @@
 <?php include "includes/functions.php"; ?>
+<?php include "includes/functions.profile.php"; ?>
 <?php include "includes/db.php"; ?>
 <?php include "config.php"; ?>
-
 
 <?php session_start(); ?>
 
 <?php
-$group_id = $_GET['groep'];
+if (!isset($_SESSION['user_id']))
+{
+	header("Location: index.php");
+}
+?>
 
-$_SESSION['user_two_id'] = $_GET['dm_user'];
+<?php
 
-$groupMembersArray = getAllSubscribersFromGroup($group_id);
-$groupMemberCount = count($groupMembersArray);
-$usernamesArray = getUsernames($group_id);
-$group_item = getSingleGroup($group_id);
-$chat_items = getAllDmChats($group_id);
-$showAdmin = deleteGroupPermission($group_id);
+$chat_group_id = $_GET['chat_group_id'];
+
+$user_id = $_SESSION['user_id'];
+
+$usernamesArray = getUsernames($chat_group_id);
+$chat_items = getAllDmChats($chat_group_id);
 
 $error_color = "green";
 $errors = "";
@@ -45,81 +49,16 @@ $errors = "";
 				<div class="col s12 pageHeadColumn">
 					<div class="row">
 						<div class="col s6">
-							<h5 class="teal-text"><b>Direct message:</b> <?php ?></h5>
+							<h5 class="teal-text"><b>Direct Messaging with:</b></h5>
 						</div>
-
 					</div>
 				</div>
 			</div>
-
-			<div id="modal1" class="modal">
-				<div class="modal-content">
-					<div class="row">
-						<div class="col s6 left-align">
-							<h4><?php echo '<div class="italic">Aantal deelnemers: ' . $groupMemberCount . '</div>'; ?></h4>
-						</div>
-						<div class="col s6 right-align">
-							<?php
-							if($user_perm == 1)
-							{
-								echo '<a class="waves-effect hide-on-large-only waves-light btn-floating ' . $core_colors['accent'] . ' modal-trigger modalEditButton" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
-
-								echo '<a class="waves-effect waves-light btn ' . $core_colors['accent'] . ' modal-trigger modalEditButton hide-on-med-and-down hide-on-small-only" data-target="modalEdit" data-editgroupid="' . $group_id . '"><i class="material-icons left">edit</i>Aanpassen</a>';
-							}
-							?>
-						</div>
-					</div>
-
-					<?php
-					if($groupMemberCount > 0) 
-					{
-						echo '<ul class="collection with-header">';
-
-						if($user_perm == 1)
-						{
-							foreach ($groupMembersArray as $key=>$member)
-							{											
-								if($showAdmin == $member["user_name"])
-								{
-									echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
-								}
-								else
-								{
-									echo '<li class="collection-item left" style="width: 100%;">'. $member["user_name"] .'<a href="deleteuser.php?groep=' . $member['group_id'] . '&delete=' . $member["user_id"] . '" class="right red-text">Verwijderen</a></li>';	
-								}
-							}
-							echo '</ul>';
-						}
-						else
-						{
-							foreach ($groupMembersArray as $key=>$member)
-							{
-								if($showAdmin == $member["user_name"])
-								{
-									echo '<li class="collection-item">'. $member["user_name"] .'<a href="" class="right green-text" style="pointer-events:none;">Admin</a></li>';
-								}
-								else
-								{
-									echo '<li class="collection-item">'. $member["user_name"] .'</li>';
-								}
-							}
-							echo '</ul>';
-						}
-					}
-					else
-					{
-						echo '<div class="italic">Deze groepschat heeft nog geen deelnemers!</div>';
-					}
-					?>
-
-				</div>
-			</div>
-
 			<div id="chatHistoryContainer">
 			</div>
 
 			<div id="chatSendContainer" style="position: absolute; bottom: 0px; left: 0px; width: 100%; box-sizing: border-box; margin-bottom: 16px;">
-				<form name="addMessage" method="post" action="singlechat.php">
+				<form name="addDmMessage" method="post" action="singlechat.php">
 					<div class="row" style="margin: 0;">
 						<div class="valign-wrapper">
 							<ul class="collapsible subscribers" data-collapsible="accordion">
@@ -141,8 +80,9 @@ $errors = "";
 	</div>
 </div>
 
+
 <script>
-	var this_user = "<?php echo $_SESSION['user_id']; ?>";
+	var this_user = "<?php echo $user_id; ?>";
 	$(document).ready(function(){
 
 		$(".modalEditButton").on("click", function(e) {
@@ -206,7 +146,7 @@ $errors = "";
 				data: {
 					"message": newMessage,
 					"submit": "true",
-					"group_id": "<?php echo $group_id; ?>",
+					"chat_group_id": "<?php echo $chat_group_id; ?>",
 				},
 				success: function (data) {
 					$('#chatTextarea').val('');
@@ -241,11 +181,11 @@ $errors = "";
 			$.ajax({
 				url: url,
 				type: 'GET',
-				data: { "group_id": "<?php echo $group_id; ?>" },
+				data: { "chat_group_id": "<?php echo $chat_group_id; ?>" },
 				success: function (data) {
 					if(data == false)
 					{
-						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Stuur een direct message.</div></div></div>';
+						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze Groepschat!</div></div></div>';
 
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}

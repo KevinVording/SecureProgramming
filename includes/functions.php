@@ -428,18 +428,14 @@ function getAllChats($group_id)
     return $text_array;
 }
 
-function getAllDmChats()
+
+function getAllDmChats($chat_group_id)
 {
     global $connection;
 
-    $user_one_id = $_SESSION['user_id'];
-    $user_two_id = $_GET['dm_user'];
-
-    $query = "SELECT chat_message
-    FROM  sw_single_chat
-    WHERE sw_single_chat.user_one_id = '$user_one_id'
-    AND sw_single_chat.user_two_id = '$user_two_id'
-    ORDER BY timemessage";
+    $query = "SELECT sw_single_chat_group.message
+    FROM sw_single_chat, sw_single_chat_group
+    WHERE sw_single_chat.chat_id = sw_single_chat_group.chat_id";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -458,12 +454,13 @@ function getAllDmChats()
     return $text_array;
 }
 
-function addMessage($chat_message, $user_id, $group_id, $db_link)
+
+function addDmMessage($chat_id, $message, $db_link)
 {
     global $connection;
 
-    $query = "INSERT INTO sw_chat(chat_message, user_id, group_id)";
-    $query .= "VALUES ('$chat_message', '$user_id', '$group_id')";
+    $query = "INSERT INTO `sw_single_chat_group` (`chat_id`, `message`) 
+    VALUES ('$chat_id', '$message');";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -471,18 +468,22 @@ function addMessage($chat_message, $user_id, $group_id, $db_link)
     return $result;
 }
 
-function addDmMessage($chat_message, $user_one_id, $user_two_id, $db_link)
+
+
+function addMessage($chat_id, $chat_message, $user_id, $group_id, $db_link)
 {
     global $connection;
 
-    $query = "INSERT INTO sw_single_chat(chat_message, user_one_id, user_two_id)";
-    $query .= "VALUES ('$chat_message', '$user_one_id', '$user_two_id')";
+    $query = "INSERT INTO sw_chat(chat_id,chat_message, user_id, group_id)";
+    $query .= "VALUES ('$chat_id', '$chat_message', '$user_id', '$group_id')";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
 
     return $result;
 }
+
+
 
 function editGroup($group_id, $group_name, $group_description, $group_password)
 {
