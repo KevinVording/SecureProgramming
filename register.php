@@ -40,7 +40,7 @@
 
                     $errors.= 'Regristratie is compleet. U kunt nu inloggen';
 
-                    //header("Refresh: 2; URL=index.php");
+                    header("Refresh: 2; URL=index.php");
                 }
                 else
                 {
