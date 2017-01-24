@@ -433,9 +433,10 @@ function getAllDmChats($chat_group_id)
 {
     global $connection;
 
-    $query = "SELECT sw_single_chat_group.message
-    FROM sw_single_chat, sw_single_chat_group
-    WHERE sw_single_chat.chat_id = sw_single_chat_group.chat_id";
+    $query = "SELECT *
+    , sw_user.user_name
+    FROM sw_single_chat
+    INNER JOIN sw_user ON sw_user.user_id = sw_single_chat.user_one_id";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -459,7 +460,7 @@ function addDmMessage($chat_id, $message, $db_link)
 {
     global $connection;
 
-    $query = "INSERT INTO `sw_single_chat_group` (`chat_id`, `message`) 
+    $query = "INSERT INTO `sw_single_chat_group` (`chat_id`, `message`)
     VALUES ('$chat_id', '$message');";
     $result = mysqli_query($connection, $query);
 
@@ -527,12 +528,12 @@ function deleteGroupPermission($group_id, $user_id)
 {
     global $connection;
 
-    $query = "SELECT group_id, user_id 
+    $query = "SELECT group_id, user_id
     FROM sw_user_group
     WHERE group_id = '$group_id'
     AND user_id = '$user_id'
     AND user_group_rights = 1";
-    
+
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -558,7 +559,7 @@ function showAdmin($group_id)
     $query = "SELECT created_by
     FROM sw_group
     WHERE group_id = '$group_id'";
-    
+
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);

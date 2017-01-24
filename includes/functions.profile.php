@@ -52,19 +52,18 @@ function showExistingUsernames($user_id, $connection) {
 
  $user_id = $_SESSION['user_id'];
 
- $query = "SELECT *
- FROM sw_user
- INNER JOIN sw_single_chat
- ON sw_user.user_id = sw_single_chat.user_two_id
- GROUP BY sw_user.user_id;";
+ $query = "SELECT
+    sw_user.user_id
+ ,  sw_user.user_name
+ FROM sw_user";
 
  $result = databaseQuery($query, $connection);
  while($row = databaseFetchRow($result)) {
 
-  $chat_id = $row['chat_id'];
+  $user_two_id = $row['user_id'];
 
   echo $row['user_name']."&nbsp</br>";
-  echo '<a class="waves-effect waves-light btn" href="singlechat.php?chat_group_id='.$chat_id.'">Direct Message</a></br>';
+  echo '<a class="waves-effect waves-light btn" href="singlechat.php?chat_group_id='.$user_two_id.'">Direct Message</a></br>';
 
 }
 

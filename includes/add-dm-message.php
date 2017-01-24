@@ -11,7 +11,7 @@ if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['chat_gr
 	$message = escapeString($_POST['message']);
 	$chat_id = escapeString($_POST['chat_group_id']);
 
-	
+
 	$secret_key = "lkgitorpwyfhcjak";
 
 // Create the initialization vector for added security.
@@ -19,8 +19,8 @@ if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['chat_gr
 
 // Encrypt $string
 	$encrypted_string = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $secret_key, $message, MCRYPT_MODE_CBC, $iv);
-	
-	$newMessage = addDmMessage($chat_id, $encrypted_string);
+
+	$newMessage = addDmMessage($chat_id, $message);
 	var_dump($newMessage);
 }
 ?>

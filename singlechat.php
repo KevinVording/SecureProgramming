@@ -192,6 +192,7 @@ $errors = "";
 					else
 					{
 						loadData(data);
+						console.log(data);
 					}
 				},
 			});
