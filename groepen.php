@@ -220,7 +220,7 @@
 						<?php $subscribed = subscribedGroup($_SESSION['user_id'], $groups['group_id']); 
 							  $groupMembersArray = getAllSubscribersFromGroup($groups['group_id']);
 							  $groupMemberCount = count($groupMembersArray);
-							  $ownGroupPermission = deleteGroupPermission($groups['group_id']); ?>
+							  $ownGroupPermission = deleteGroupPermission($groups['group_id'], escapeString($_SESSION['user_id'])); ?>
 						<div class="col s12 m6 l6">
 						<?php if ($groups != false) { ?>
 							<div class="card white darken-1 hoverable">
@@ -228,7 +228,7 @@
 									<span class="card-title"><?php echo $groups['group_name']; ?></span>
 
 									<?php
-										if($ownGroupPermission == escapeString($_SESSION['username']))
+										if($ownGroupPermission == escapeString($_SESSION['user_id']))
 										{ ?>
 											<i class="small material-icons right-align modalDeleteButton clickableDiv tooltipped" data-position="top" data-tooltip="Klik hier om de groepschat te verwijderen" style="float: right; margin-top: 10px;" data-deletegroupid="<?php echo $groups['group_id']; ?>">delete</i>
 										<?php }

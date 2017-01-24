@@ -26,7 +26,7 @@
 	$usernamesArray = getUsernames($group_id);
 	$group_item = getSingleGroup($group_id);
 	$chat_items = getAllChats($group_id);
-	$showAdmin = deleteGroupPermission($group_id);
+	$showAdmin = showAdmin($group_id);
 
 	$error_color = "green";
 	$errors = "";
