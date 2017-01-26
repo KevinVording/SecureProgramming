@@ -153,12 +153,12 @@ function getAllSubscribersFromGroup($group_id)
     AND sw_user_group.group_id = '$group_id'";
     $result = mysqli_query($connection, $query);
     while($row = mysqli_fetch_assoc($result)) {
-     $sub_array[] = $row;
- }
- if(empty($sub_array)) {
-     $sub_array = false;
- }
- return $sub_array;
+       $sub_array[] = $row;
+   }
+   if(empty($sub_array)) {
+       $sub_array = false;
+   }
+   return $sub_array;
 }
 
 function getUserNames($user_id)
@@ -194,11 +194,11 @@ function getSingleGroup($group_id)
     $result = mysqli_query($connection, $query);
 
     if(mysqli_num_rows($result) <= 0) {
-     return false;
- }
- $row = mysqli_fetch_assoc($result);
+       return false;
+   }
+   $row = mysqli_fetch_assoc($result);
 
- return $row;
+   return $row;
 }
 
 function subscribedGroup($user_id, $group_id)
@@ -429,14 +429,15 @@ function getAllChats($group_id)
 }
 
 
-function getAllDmChats($chat_group_id)
+function getAllDmChats($user_two)
 {
     global $connection;
 
     $query = "SELECT *
     , sw_user.user_name
     FROM sw_single_chat
-    INNER JOIN sw_user ON sw_user.user_id = sw_single_chat.user_one_id";
+    INNER JOIN sw_user ON sw_user.user_id = sw_single_chat.user_one_id
+    WHERE sw_single_chat.user_two_id = $user_two";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);
@@ -448,7 +449,7 @@ function getAllDmChats($chat_group_id)
     else
     {
         while($row = mysqli_fetch_assoc($result))
-        {
+        {   
             $text_array[] = $row;
         }
     }
@@ -456,12 +457,12 @@ function getAllDmChats($chat_group_id)
 }
 
 
-function addDmMessage($chat_id, $message, $db_link)
+function addDmMessage($chat_id, $message, $user_one_id, $user_two_id, $db_link)
 {
     global $connection;
 
-    $query = "INSERT INTO `sw_single_chat_group` (`chat_id`, `message`)
-    VALUES ('$chat_id', '$message');";
+    $query = "INSERT INTO `sw_single_chat` (`chat_id`, `chat_message`, `user_one_id`, `user_two_id`)
+    VALUES ('$chat_id', '$message', $user_one_id, $user_two_id);";
     $result = mysqli_query($connection, $query);
 
     confirmQuery($result);

@@ -4,14 +4,14 @@
 <?php include "../config.php"; ?>
 
 <?php
-$chat_group_id = $_GET['chat_group_id'];
+$user_two = $_GET['user_two'];
 
-if(isset($_GET['chat_gorup_id']) && $_GET['chat_group_id'] > 0)
+if(isset($_GET['user_two']) && $_GET['user_two'] > 0)
 {
-	$chat_group_id = $_GET['chat_group_id'];
+	$user_two = $_GET['user_two'];
 }
 
-$chat_items = getAllDmChats($chat_group_id);
+$chat_items = getAllDmChats($user_two);
 
 if(!empty($chat_items) && $chat_items !== false)
 {
@@ -20,8 +20,10 @@ if(!empty($chat_items) && $chat_items !== false)
 
 		srand($item['user_one_id']);
 		$chat_items[$key]['color'] = $core_chat_colors[rand(1, (count($core_chat_colors) -1))];
+		$chat_items[$key]['chat_message'] = base64_decode($item['chat_message']);
 		$chat_items[$key]['format_time'] = strftime($core_timestamp_formats['chat_timestamp'], strtotime($item['timemessage']));
 		$chat_items[$key]['format_date'] = date($core_timestamp_formats['chat_datestamp'], strtotime($item['timemessage']));
+
 	}
 	echo json_encode($chat_items);
 }

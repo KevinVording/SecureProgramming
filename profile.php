@@ -33,18 +33,6 @@ session_start();
 					<a style="margin: 0.82rem 0 0.656rem 0;"  class="waves-effect waves-light btn-floating hide-on-large-only <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
 						<i class="material-icons left">edit</i>direct message aanmaken
 					</a>
-					<a style="margin: 0.82rem 0 0.656rem 0;" class="waves-effect hide-on-med-and-down hide-on-small-only waves-light btn <?php echo $core_colors['accent']; ?> modal-trigger modalButton2" data-target="modal2">
-						<i class="material-icons left">edit</i>direct message aanmaken
-					</a>
-				</div>
-				<div id="modal2" class="modal">
-					<div class="modal-content">
-						<h4>Maak een Direct Message</h4>
-						<p><b>Selecteer een gebruiker</b></p>
-						<?php showNonExistingUsernames($_SESSION['user_id'], $connection); ?>
-						<br>
-						
-					</div>
 				</div>
 			</div>
 		</div>

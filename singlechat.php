@@ -14,12 +14,12 @@ if (!isset($_SESSION['user_id']))
 
 <?php
 
-$chat_group_id = $_GET['chat_group_id'];
+$user_two = $_GET['user_two'];
 
 $user_id = $_SESSION['user_id'];
 
-$usernamesArray = getUsernames($chat_group_id);
-$chat_items = getAllDmChats($chat_group_id);
+$usernamesArray = getUsernames($user_id);
+$chat_items = getAllDmChats($user_id);
 
 $error_color = "green";
 $errors = "";
@@ -146,7 +146,7 @@ $errors = "";
 				data: {
 					"message": newMessage,
 					"submit": "true",
-					"chat_group_id": "<?php echo $chat_group_id; ?>",
+					"user_two": "<?php echo $user_two; ?>",
 				},
 				success: function (data) {
 					$('#chatTextarea').val('');
@@ -181,11 +181,11 @@ $errors = "";
 			$.ajax({
 				url: url,
 				type: 'GET',
-				data: { "chat_group_id": "<?php echo $chat_group_id; ?>" },
+				data: { "user_two": "<?php echo $user_two; ?>" },
 				success: function (data) {
 					if(data == false)
 					{
-						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze Groepschat!</div></div></div>';
+						var no_chat_msg = '<div class="col s12 center-align"><div class="card white red-text text-darken-2 errorCard" style="padding: 16px 0;">Er zijn nog geen berichten in deze Direct Message!</div></div></div>';
 
 						document.getElementById('chatHistoryContainer').innerHTML = no_chat_msg;
 					}

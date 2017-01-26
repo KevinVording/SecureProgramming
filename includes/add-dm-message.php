@@ -1,26 +1,23 @@
 <?php include "db.php"; ?>
 <?php include "functions.php"; ?>
+<?php include "functions.profile.php"; ?>
 <?php include "../config.php"; ?>
+<?php include "singlechat.php"; ?>
 
 <?php session_start(); ?>
 
 <?php
-if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['chat_group_id']))
+if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['user_two']))
 {
 
 	$message = escapeString($_POST['message']);
-	$chat_id = escapeString($_POST['chat_group_id']);
+	$user_one_id = escapeString($_SESSION['user_id']);
+	$user_two_id = escapeString($_POST['user_two']);
+
+	$encrypt = base64_encode($message);
 
 
-	$secret_key = "lkgitorpwyfhcjak";
-
-// Create the initialization vector for added security.
-	$iv = mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND);
-
-// Encrypt $string
-	$encrypted_string = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $secret_key, $message, MCRYPT_MODE_CBC, $iv);
-
-	$newMessage = addDmMessage($chat_id, $message);
+	$newMessage = addDmMessage('', $encrypt, $user_one_id, $user_two_id);
 	var_dump($newMessage);
 }
 ?>

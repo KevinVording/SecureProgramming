@@ -49,58 +49,36 @@ function showExistingUsernames($user_id, $connection) {
 
  global $connection;
 
-
  $user_id = $_SESSION['user_id'];
 
  $query = "SELECT
-    sw_user.user_id
+ sw_user.user_id
  ,  sw_user.user_name
- FROM sw_user";
-
- $result = databaseQuery($query, $connection);
- while($row = databaseFetchRow($result)) {
-
-  $user_two_id = $row['user_id'];
-
-  echo $row['user_name']."&nbsp</br>";
-  echo '<a class="waves-effect waves-light btn" href="singlechat.php?chat_group_id='.$user_two_id.'">Direct Message</a></br>';
-
-}
-
-/**
- * /Users which are already in DM
- */
-function showNonExistingUsernames($user_id, $connection) {
-
- global $connection;
-
-
- $query = "SELECT *
  FROM sw_user, sw_single_chat
- WHERE sw_user.user_id != sw_single_chat.user_one_id
- ORDER BY sw_user.user_id;";
+ GROUP BY sw_user.user_name";
 
  $result = databaseQuery($query, $connection);
  while($row = databaseFetchRow($result)) {
 
   if($row['user_id'] == $_SESSION['user_id'])
   {
+
     echo "";
   }
   else{
 
-    $chat_id = rand();
-
     echo $row['user_name']."&nbsp</br>";
-    echo '<a class="waves-effect waves-light btn" href="singlechat.php?chat_group_id='.$chat_id.'">Direct Message</a></br>';
+    echo "<a href='singlechat.php?user_one=".$user_id."&user_two=".$row['user_id']."' class='waves-effect waves-light btn'>Direct Message</a></br>";
   }
 
 }
 
-}
 
 
 }
+
+
+
 
 
 

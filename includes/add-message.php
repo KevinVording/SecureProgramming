@@ -11,9 +11,9 @@ if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['group_i
 	$user_id = escapeString($_SESSION['user_id']);
 	$group_id = escapeString($_POST['group_id']);
 
-	
+	$encrypt = base64_encode($message);
 
-	$newMessage = addMessage('', $message, $user_id, $group_id);
+	$newMessage = addMessage('', $encrypt, $user_id, $group_id);
 	var_dump($newMessage);
 }
 ?>
