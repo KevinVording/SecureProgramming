@@ -420,6 +420,8 @@ $(document).ready(function() {
 
 	$('.tooltipped').tooltip({delay: 500});
 });
+
+	document.getElementById("groupPassword").oninput = function() {passwordValidateChats()};
 </script>
 
 <?php include "includes/footer.php"; ?>

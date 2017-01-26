@@ -246,6 +246,9 @@
 	</div>
 
 	<script>
+	document.getElementById("groupPassword").oninput = function() {passwordValidateEditChats()};
+	document.getElementById("groupPasswordCheck").oninput = function() {passwordCheckEditChatsValidate()};
+
 		var this_user = "<?php echo $_SESSION['user_id']; ?>";
 		$(document).ready(function(){
 
