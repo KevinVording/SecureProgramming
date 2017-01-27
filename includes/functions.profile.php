@@ -47,34 +47,51 @@ function createChat($chat_id, $user_one_id, $user_two_id, $connection)
  */
 function showExistingUsernames($user_id, $connection) {
 
- global $connection;
+   global $connection;
 
- $user_id = $_SESSION['user_id'];
+   $query = "SELECT
+      sw_user.user_id
+   ,  sw_user.user_name
+   FROM sw_user
+   GROUP BY sw_user.user_name";
 
- $query = "SELECT
- sw_user.user_id
- ,  sw_user.user_name
- FROM sw_user, sw_single_chat
- GROUP BY sw_user.user_name";
+   $result = databaseQuery($query, $connection);
+   while($row = databaseFetchRow($result)) {
 
- $result = databaseQuery($query, $connection);
- while($row = databaseFetchRow($result)) {
-
-  if($row['user_id'] == $_SESSION['user_id'])
-  {
-
-    echo "";
+    if($row['user_id'] == $_SESSION['user_id'])
+    {
+      echo "";
+    }
+    else
+    {
+      $totalNewMessages = countTotalNewMessages($user_id, $row['user_id'], $connection);
+      echo "<div class='collapsible-body'>
+              <div class='listItem'>";
+      echo "<a href='singlechat.php?user_two=".$row['user_id']."' class='black-text'>".$row['user_name']."</a>";
+      echo '<span class="secondary-content black-text"><i>U heeft ' . $totalNewMessages . ' nieuwe berichten!</i></span>';
+      echo "  </div>
+            </div>";
+    }
   }
-  else{
-
-    echo $row['user_name']."&nbsp</br>";
-    echo "<a href='singlechat.php?user_one=".$user_id."&user_two=".$row['user_id']."' class='waves-effect waves-light btn'>Direct Message</a></br>";
-  }
-
 }
 
+function countTotalNewMessages($user_id, $user_two_id, $connection) {
+  global $connection;
 
+  $query = "SELECT COUNT(sw_single_chat.visited)
+            AS amount
+            FROM sw_single_chat
+            WHERE user_one_id = '$user_id'
+            AND user_two_id = '$user_two_id'
+            AND visited = 0";
 
+  $result = databaseQuery($query, $connection);
+  while($row = databaseFetchRow($result))
+  {
+    $amount = $row['amount'];
+  }
+
+  return $amount;
 }
 
 

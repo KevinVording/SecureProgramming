@@ -22,11 +22,14 @@ session_start();
 
 				<ul class="collapsible" data-collapsible="accordion">
 					<li>
-						<?php $countChannel = countTotalUsers($_SESSION['user_id'], $connection); ?>
-						<div class="collapsible-header"><i class="material-icons">view_list</i>Openstaande Direct Messages (<?php echo $countChannel; ?>)</div>
-						<div class="collapsible-body">
-							<div class="listItem"><?php showExistingUsernames($_SESSION['user_id'], $connection)?></div>
-						</div>
+						<div class="collapsible-header"><i class="material-icons">view_list</i>Direct Messages</div>
+						<!--<div class="collapsible-body">
+							<div class="listItem">-->
+								<?php
+									showExistingUsernames($_SESSION['user_id'], $connection)
+								?>
+							<!--</div>
+						</div>-->
 					</li>
 				</ul>
 				<div class="col s6" style="text-align: right;">

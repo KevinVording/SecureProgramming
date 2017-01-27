@@ -1,27 +1,16 @@
 <?php
-	
+
 	// Disable errors
 	//error_reporting(0);
-	
+
 	//Includes
 	include_once("config.php");
 	$include_array = array(
-		"functions.core",
-		"router",
 		"functions.account",
 		"functions.website",
 		"functions.channel",
 		"functions.profile",
 		"database",
-		"ext/phpmailer/class.phpmailer",
-		"ext/phpmailer/class.smtp",
-		"ext/phpmailer/class.phpmaileroauthgoogle",
-		"email",
-	);
-
-	$require_array = array(
-		"app/Dropbox/autoload",
-		"app/dropbox.start",
 	);
 
 	foreach($include_array as $include) {
@@ -43,15 +32,9 @@
 	}
 	date_default_timezone_set('Europe/Amsterdam');
 
-	//Database connection
-	$core_db_link = databaseConnect($core_db['host'], $core_db['username'],$core_db['password'], $core_db['dbname']);
-
-	// User account stuff
-	$core_user_item	= false;
-	
 	// Check if user is logged in, or redirected if not logged in.
 	include_once("includes/account_validation.php");
-	
+
 	// Set the theme (if applicable)
 	if($core_user_item != false) {
 		if($core_user_item['user_theme'] != "0") {
@@ -64,11 +47,4 @@
    	// create a random IV to use with CBC encoding
 	$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 
-	//Variable used in the html <title> tag, can be overwritten of the page want a specific text in front of the title: "USERNAME | Profile | Swack"
-	$core_title_prefix = "";
-	//Link used by the header, if set, the header will show a big 'back' arrow with the given link, is meant for use in the pages, if not set, no arrow will be shown.
-	$core_back_link = "";
-	
-	// Start the router
-	include(T_ROOT . SCRIPT_FOLDER . PAGE_TEMPLATE);
 ?>
