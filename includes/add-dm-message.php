@@ -18,6 +18,6 @@ if (isset($_POST['submit']) && isset($_POST['message']) && isset($_POST['user_tw
 
 
 	$newMessage = addDmMessage('', $encrypt, $user_one_id, $user_two_id);
-	var_dump($newMessage);
+	//var_dump($newMessage);
 }
 ?>

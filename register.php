@@ -7,7 +7,7 @@
     $error_color = 'green';
     $error_background = 'bg-success';
 
-    if (isset($_POST['register'])) 
+    if (isset($_POST['register']))
     {
         $username           = escapeString($_POST['username']);
         $user_password      = escapeString($_POST['password']);
@@ -20,13 +20,13 @@
 
         if (!empty($user_email) && !empty($user_lastname) && !empty($user_firstname) && !empty($username) && !empty($user_password) && !empty($confirm_password))
         {
-            if (usernameExists($username)) 
+            if (usernameExists($username))
             {
                 $errors .= 'Gebruikersnaam bestaat al';
                 $error_color = 'red';
                 $error_background = 'bg-danger';
             }
-            elseif (emailExists($user_email)) 
+            elseif (emailExists($user_email))
             {
                 $errors .= 'Email bestaat al';
                 $error_color = 'red';
@@ -34,7 +34,7 @@
             }
             else
             {
-                if ($user_password == $confirm_password) 
+                if ($user_password == $confirm_password)
                 {
                     createUser($username, $user_firstname, $user_lastname, $user_email, $hashpassword);
 
@@ -47,8 +47,8 @@
                     $errors .= 'Wachtwoorden komen niet overeen';
                     $error_color = 'red';
                     $error_background = 'bg-danger';
-                }     
-            }       
+                }
+            }
         }
         else
         {
@@ -59,13 +59,13 @@
     }
 
 ?>
-    
+
     <?php  include "includes/header.php"; ?>
 
     <!-- Page Content -->
     <div class="container">
         <div class="row">
-            <div class="col s4 offset-s4"">
+            <div class="col s4 offset-s4">
                 <!-- Blog Login Well -->
                 <div class="card-panel white" style="margin-top: 40px;">
                 <h4 class="center-align">Registreren</h4>
@@ -74,8 +74,8 @@
                             <div class='<?php echo $error_background; ?> center-align' style='color: <?php echo $error_color; ?>'>
                                 <?php echo $errors; ?>
                             </div><br>
-                        <?php endif; ?> 
-                    
+                        <?php endif; ?>
+
                         <div class="form-group">
                             <i class="tiny material-icons tooltipped" data-position="left" data-delay="50" data-tooltip="Alleen letters en cijfers zijn toegestaan" style="float:left; margin-top: 4px;">info</i>
                             &nbsp;<label for="username" class="sr-only">Gebruikersnaam</label>
@@ -116,7 +116,7 @@
                         </div>
 
                         <p class="center-align"><a href="index.php">Al een account?</a></p>
-                    </form>                                
+                    </form>
                 </div>
             </div>
         </div> <!-- /.row -->
