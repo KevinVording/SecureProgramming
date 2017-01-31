@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 27 jan 2017 om 20:04
+-- Gegenereerd op: 31 jan 2017 om 15:23
 -- Serverversie: 10.1.16-MariaDB
 -- PHP-versie: 7.0.9
 
@@ -39,7 +39,8 @@ CREATE TABLE `sw_chat` (
 --
 
 INSERT INTO `sw_chat` (`chat_id`, `chat_message`, `user_id`, `group_id`, `timemessage`) VALUES
-(41, 'VGVzdA==', 6, 54661, '2017-01-27 19:54:58');
+(41, 'VGVzdA==', 6, 54661, '2017-01-27 19:54:58'),
+(42, 'dGVzdA==', 6, 54661, '2017-01-31 01:48:30');
 
 -- --------------------------------------------------------
 
@@ -84,7 +85,10 @@ CREATE TABLE `sw_single_chat` (
 --
 
 INSERT INTO `sw_single_chat` (`chat_id`, `chat_message`, `user_one_id`, `user_two_id`, `timemessage`, `visited`) VALUES
-(45, 'eW8gZ2Fw', 6, 3, '2017-01-27 20:03:14', b'0');
+(45, 'eW8gZ2Fw', 6, 3, '2017-01-27 20:03:14', b'0'),
+(46, 'dGVzdA==', 6, 14, '2017-01-31 01:48:54', b'0'),
+(47, 'b2s=', 6, 3, '2017-01-31 01:54:01', b'0'),
+(48, 'dGVzdA==', 6, 14, '2017-01-31 15:22:40', b'0');
 
 -- --------------------------------------------------------
 
@@ -190,7 +194,7 @@ ALTER TABLE `sw_user_group`
 -- AUTO_INCREMENT voor een tabel `sw_chat`
 --
 ALTER TABLE `sw_chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 --
 -- AUTO_INCREMENT voor een tabel `sw_group`
 --
@@ -200,7 +204,7 @@ ALTER TABLE `sw_group`
 -- AUTO_INCREMENT voor een tabel `sw_single_chat`
 --
 ALTER TABLE `sw_single_chat`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT voor een tabel `sw_user`
 --
