@@ -10,6 +10,8 @@
 		"functions.website",
 		"functions.channel",
 		"functions.profile",
+		"functions.singlechat",
+		"functions",
 		"database",
 	);
 

@@ -1,4 +1,9 @@
 <?php
+// Timestamps, are changed according to server OS if needed.
+	$core_timestamp_formats = array(
+		"chat_timestamp" => "%H:%M",
+		"chat_datestamp" => "m/d/Y",
+	);
 		// Default theme colors.
 	$core_colors = array(
 		"main" 		=> "indigo",
